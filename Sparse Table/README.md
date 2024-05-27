@@ -12,4 +12,4 @@ Operations like addition, multiplication and bitwise XOR are not allowed.
 
 The RMQ implementation is inspired from Neal Wu's C++ implementation.
 
-The difference is obviously the language, and I prefer the query range [l, r] both inclusive.
+The difference is obviously the language, and I prefer the query range `[l, r]` both inclusive.
