@@ -1,11 +1,11 @@
 # Library for Competitive Programming
 
-This repository contains the implementation of some of the Data Structures and Algorithms used in Competitve Programming.
+This repository contains the implementation of some of the Data Structures and Algorithms used in Competitive Programming.
 
 The main language of implementation is **Java**.
 
 Currently, the DS/Algorithms covered:
-- [Sparse Table](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/Sparse%20Table)
+- [Sparse Table](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/SparseTable)
 
 More implementations might be covered in the future.
 
