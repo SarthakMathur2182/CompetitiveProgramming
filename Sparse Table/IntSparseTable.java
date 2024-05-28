@@ -4,14 +4,14 @@ class IntSparseTable {
     }
 
     private int[][] rangeValue;
-    java.util.function.IntBinaryOperator operator;
+    private final java.util.function.IntBinaryOperator operator;
 
     public IntSparseTable(int[] values, java.util.function.IntBinaryOperator operator) {
         this.operator = operator;
         build(values);
     }
 
-    void build(int[] values) {
+    private void build(int[] values) {
         int n = values.length;
         int levels = highestBit(n) + 1;
 
@@ -26,7 +26,7 @@ class IntSparseTable {
         }
     }
 
-    int query(int a, int b) {
+    public int query(int a, int b) {
         int level = highestBit(b - a + 1);
         return operator.applyAsInt(rangeValue[level][a], rangeValue[level][b - (1 << level) + 1]);
     }

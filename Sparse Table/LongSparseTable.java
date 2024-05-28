@@ -4,14 +4,14 @@ class LongSparseTable {
     }
 
     private long[][] rangeValue;
-    java.util.function.LongBinaryOperator operator;
+    private final java.util.function.LongBinaryOperator operator;
 
     public LongSparseTable(long[] values, java.util.function.LongBinaryOperator operator) {
         this.operator = operator;
         build(values);
     }
 
-    void build(long[] values) {
+    private void build(long[] values) {
         int n = values.length;
         int levels = highestBit(n) + 1;
 
@@ -26,7 +26,7 @@ class LongSparseTable {
         }
     }
 
-    long query(int a, int b) {
+    public long query(int a, int b) {
         int level = highestBit(b - a + 1);
         return operator.applyAsLong(rangeValue[level][a], rangeValue[level][b - (1 << level) + 1]);
     }
