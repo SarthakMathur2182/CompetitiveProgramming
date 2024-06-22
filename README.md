@@ -6,6 +6,7 @@ The main language of implementation is **Java**.
 
 Currently, the DS/Algorithms covered:
 - [Sparse Table](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/SparseTable)
+- [Segment Tree](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/SegmentTree)
 
 More implementations might be covered in the future.
 
