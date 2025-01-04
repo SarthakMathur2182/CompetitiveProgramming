@@ -1,11 +1,13 @@
 /**
- * This is an abstract class, so you have to override the methods: {@link #getDataIdentity()}, {@link #getLazyIdentity()}, {@link #merge(Data, Data)}, {@link #apply(Data, int, int, Lazy)} and {@link #compose(Lazy, Lazy)}.
+ * This is an abstract class, so you have to override the methods: {@link #setDataIdentity()}, {@link #setLazyIdentity()}, {@link #merge(Data, Data)}, {@link #apply(Data, int, int, Lazy)} and {@link #compose(Lazy, Lazy)}.
  * <p>The implementation could've also called them as constructor parameters, but this way seemed cleaner because we have so many functions, especially in lazy propagation.
  */
 abstract class LazySegmentTree<Data, Lazy> {
     private final int n;
     private final Data[] dataNodes;
     private final Lazy[] lazyNodes;
+    Data DATA_IDENTITY;
+    Lazy LAZY_IDENTITY;
 
     /**
      * All the elements are initialized with the identity element.
@@ -16,9 +18,11 @@ abstract class LazySegmentTree<Data, Lazy> {
     public LazySegmentTree(int n) {
         this.n = ceilingPowerOf2(n);
         dataNodes = (Data[]) new Object[this.n << 1];
-        java.util.Arrays.fill(dataNodes, getDataIdentity());
+        setDataIdentity();
+        java.util.Arrays.fill(dataNodes, DATA_IDENTITY);
         lazyNodes = (Lazy[]) new Object[this.n << 1];
-        java.util.Arrays.fill(lazyNodes, getLazyIdentity());
+        setLazyIdentity();
+        java.util.Arrays.fill(lazyNodes, LAZY_IDENTITY);
     }
 
     /**
@@ -110,7 +114,7 @@ abstract class LazySegmentTree<Data, Lazy> {
         int m = (l + r) >> 1;
         applyAt(p << 1, l, m, lazyNodes[p]);
         applyAt(p << 1 | 1, m + 1, r, lazyNodes[p]);
-        lazyNodes[p] = getLazyIdentity();
+        lazyNodes[p] = LAZY_IDENTITY;
     }
 
     /**
@@ -122,7 +126,7 @@ abstract class LazySegmentTree<Data, Lazy> {
 
     private Data rangeQuery(int p, int l, int r, int ql, int qr) {
         if (qr < l || ql > r)
-            return getDataIdentity();
+            return DATA_IDENTITY;
 
         if (ql <= l && r <= qr)
             return dataNodes[p];
@@ -156,12 +160,12 @@ abstract class LazySegmentTree<Data, Lazy> {
     public abstract Lazy compose(Lazy prev, Lazy next);
 
     /**
-     * @return The identity element for the lazy operation, which signifies that there is no lazy update operation.
+     * Sets the identity element for the lazy operation, which signifies that there is no lazy update operation.
      */
-    public abstract Lazy getLazyIdentity();
+    public abstract void setLazyIdentity();
 
     /**
-     * @return The identity element for the binary operator defined in {@link #merge(Data, Data)}
+     * Sets the identity element for the binary operator defined in {@link #merge(Data, Data)}
      */
-    public abstract Data getDataIdentity();
+    public abstract void setDataIdentity();
 }

@@ -1,11 +1,11 @@
 /**
- * This is an abstract class, so you have to override the methods {@link #getIdentity()} and {@link #merge(Node, Node)}.
+ * This is an abstract class, so you have to override the methods {@link #setIdentity()} and {@link #merge(Node, Node)}.
  * <p>The implementation could've also called them as constructor parameters, but this way seemed cleaner, especially when we might have multiple functions, for example in lazy propagation.
  */
 abstract class SegmentTree<Node> {
-
     Node[] tree;
     private final int n;
+    Node IDENTITY;
 
     /**
      * All the elements are initialized with the identity element.
@@ -16,7 +16,8 @@ abstract class SegmentTree<Node> {
     public SegmentTree(int n) {
         this.n = ceilingPowerOf2(n);
         tree = (Node[]) new Object[this.n << 1];
-        java.util.Arrays.fill(tree, getIdentity());
+        setIdentity();
+        java.util.Arrays.fill(tree, IDENTITY);
     }
 
     /**
@@ -108,7 +109,7 @@ abstract class SegmentTree<Node> {
 
     private Node query(int v, int l, int r, int ql, int qr) {
         if (ql > r || qr < l)
-            return getIdentity();
+            return IDENTITY;
         if (ql <= l && qr >= r)
             return tree[v];
         int m = (l + r) >> 1;
@@ -116,9 +117,9 @@ abstract class SegmentTree<Node> {
     }
 
     /**
-     * @return The identity element for the binary operator defined in {@link #merge(Node, Node)}
+     * Sets the identity element for the binary operator defined in {@link #merge(Node, Node)}
      */
-    public abstract Node getIdentity();
+    public abstract void setIdentity();
 
     /**
      * The binary operator which we'll apply on the tree.

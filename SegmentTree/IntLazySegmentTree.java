@@ -1,11 +1,12 @@
 /**
- * This is an abstract class, so you have to override the methods: {@link #getDataIdentity()}, {@link #getLazyIdentity()}, {@link #merge(int, int)}, {@link #apply(int, int, int, int)} and {@link #compose(int, int)}.
+ * This is an abstract class, so you have to override the methods: {@link #setDataIdentity()}, {@link #setLazyIdentity()}, {@link #merge(int, int)}, {@link #apply(int, int, int, int)} and {@link #compose(int, int)}.
  * <p>The implementation could've also called them as constructor parameters, but this way seemed cleaner because we have so many functions, especially in lazy propagation.
  */
 abstract class IntLazySegmentTree {
     private final int n;
     private final int[] dataNodes;
     private final int[] lazyNodes;
+    int DATA_IDENTITY, LAZY_IDENTITY;
 
     /**
      * All the elements are initialized with the identity element.
@@ -15,9 +16,11 @@ abstract class IntLazySegmentTree {
     public IntLazySegmentTree(int n) {
         this.n = ceilingPowerOf2(n);
         dataNodes = new int[this.n << 1];
-        java.util.Arrays.fill(dataNodes, getDataIdentity());
+        setDataIdentity();
+        java.util.Arrays.fill(dataNodes, DATA_IDENTITY);
         lazyNodes = new int[this.n << 1];
-        java.util.Arrays.fill(lazyNodes, getLazyIdentity());
+        setLazyIdentity();
+        java.util.Arrays.fill(lazyNodes, LAZY_IDENTITY);
     }
 
     /**
@@ -109,7 +112,7 @@ abstract class IntLazySegmentTree {
         int m = (l + r) >> 1;
         applyAt(p << 1, l, m, lazyNodes[p]);
         applyAt(p << 1 | 1, m + 1, r, lazyNodes[p]);
-        lazyNodes[p] = getLazyIdentity();
+        lazyNodes[p] = LAZY_IDENTITY;
     }
 
     /**
@@ -121,7 +124,7 @@ abstract class IntLazySegmentTree {
 
     private int rangeQuery(int p, int l, int r, int ql, int qr) {
         if (qr < l || ql > r)
-            return getDataIdentity();
+            return DATA_IDENTITY;
 
         if (ql <= l && r <= qr)
             return dataNodes[p];
@@ -155,12 +158,12 @@ abstract class IntLazySegmentTree {
     public abstract int compose(int prev, int next);
 
     /**
-     * @return The identity element for the lazy operation, which signifies that there is no lazy update operation.
+     * Sets the identity element for the lazy operation, which signifies that there is no lazy update operation.
      */
-    public abstract int getLazyIdentity();
+    public abstract void setLazyIdentity();
 
     /**
-     * @return The identity element for the binary operator defined in {@link #merge(int, int)}
+     * Sets the identity element for the binary operator defined in {@link #merge(int, int)}
      */
-    public abstract int getDataIdentity();
+    public abstract void setDataIdentity();
 }
