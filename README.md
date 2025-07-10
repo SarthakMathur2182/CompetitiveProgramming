@@ -2,9 +2,10 @@
 
 This repository contains the implementation of some of the Data Structures and Algorithms used in Competitive Programming.
 
-The main language of implementation is **Java**.
+The main languages of implementation are **Java** and **Rust**.
 
 Currently, the DS/Algorithms covered:
+- [Template (With fast I/O)](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/Template)
 - [Sparse Table](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/SparseTable)
 - [Segment Tree](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/SegmentTree)
 - Graph (In experiment, might remove later)
