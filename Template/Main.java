@@ -1,9 +1,4 @@
 /*
-This code will run multiple times, so generally I paste multiple inputs at once.
-The run command should have -DEBUG for it (and the debug functions) to work.
-*/
-
-/*
     Author: WORTH
     Problem:
 */

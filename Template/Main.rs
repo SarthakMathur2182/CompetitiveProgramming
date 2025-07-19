@@ -1,91 +1,132 @@
 /*
-I've tried to write this template on my own, so don't expect much performance from this.
-Maybe I'll work more on this in the future.
-
-You can read these discussions to get some idea: https://codeforces.com/blog/entry/144590
+    Author: WORTH
+    Problem:
 */
+// Solution at end
 
-#[allow(unused_imports)]
-use std::io::{BufRead, BufReader, BufWriter, StdinLock, StdoutLock, Write};
+#![allow(unused_variables)]
+#![allow(unused_imports)]
+use std::io::{BufWriter, StdoutLock, Write};
 
-/// - This is not tested on UTF-8, only ASCII.
-/// - This implementation is not yet safe in case of no input found exception.
-/// So please follow the input format.
-pub struct Scanner<'a> {
-    reader: BufReader<StdinLock<'a>>,
-    input_helper: String,
-}
-impl<'a> Scanner<'a> {
+pub mod custom_io {
+    use std::io::{BufRead, BufReader, StdinLock};
+
     /// This is used in both input and output (check the main function).
-    const IO_BUF_SIZE: usize = 1 << 16;
+    pub const IO_BUF_SIZE: usize = 1 << 16;
 
-    pub fn new() -> Self {
-        Self {
-            reader: BufReader::with_capacity(Scanner::IO_BUF_SIZE, std::io::stdin().lock()),
-            input_helper: String::with_capacity(32),
+    /// This is not tested on UTF-8, only ASCII.
+    pub struct Scanner<'a> {
+        reader: BufReader<StdinLock<'a>>,
+        input_helper: String,
+        pub stored_next_byte: Option<u8>,
+    }
+    impl<'a> Scanner<'a> {
+        pub fn new() -> Self {
+            let mut reader = BufReader::with_capacity(IO_BUF_SIZE, std::io::stdin().lock());
+            let first_byte = reader.fill_buf().unwrap().get(0).copied();
+            if first_byte.is_some() {
+                reader.consume(1);
+            }
+            Self {
+                reader,
+                input_helper: String::with_capacity(32),
+                stored_next_byte: first_byte,
+            }
+        }
+
+        // BufReader::peek() and BufReader::has_data_left() are not available yet
+        fn next_byte(&mut self) -> Option<u8> {
+            let b = self.stored_next_byte;
+            self.stored_next_byte = self.reader.fill_buf().unwrap().get(0).copied();
+            if b.is_some() {
+                self.reader.consume(1);
+            }
+            b
+        }
+
+        fn skip_whitespaces(&mut self) {
+            while let Some(b) = self.stored_next_byte {
+                if b.is_ascii_whitespace() {
+                    self.next_byte();
+                } else {
+                    break;
+                }
+            }
+        }
+
+        pub fn input<T: std::str::FromStr>(&mut self) -> T
+        where
+            T::Err: std::fmt::Debug,
+        {
+            self.skip_whitespaces();
+            assert!(self.stored_next_byte.is_some(), "Input not found!");
+
+            self.input_helper.clear();
+            while let Some(c) = self.next_byte() {
+                if c.is_ascii_whitespace() {
+                    break;
+                }
+                self.input_helper.push(c as char);
+            }
+
+            self.input_helper
+                .parse::<T>()
+                .expect("Failed to parse input")
+        }
+
+        pub fn input_line(&mut self) -> String {
+            self.skip_whitespaces();
+            assert!(self.stored_next_byte.is_some(), "Input not found!");
+
+            self.input_helper.clear();
+            while let Some(c) = self.next_byte() {
+                if c.is_ascii_whitespace() {
+                    break;
+                }
+                self.input_helper.push(c as char);
+            }
+            self.input_helper.trim().to_string()
         }
     }
+}
+use custom_io::Scanner;
 
-    // BufReader::peek() and BufReader::has_data_left() are not available yet
-    fn peek_next_byte(&mut self) -> u8 {
-        unsafe { *self.reader.fill_buf().unwrap().get_unchecked(0) }
+struct Solution<'io> {
+    sc: Scanner<'io>,
+    out: BufWriter<StdoutLock<'io>>,
+}
+impl<'io> Solution<'io> {
+    pub fn with_io(sc: Scanner<'io>, out: BufWriter<StdoutLock<'io>>) -> Self {
+        Self { sc, out }
     }
 
-    fn next_byte(&mut self) -> u8 {
-        let b = self.peek_next_byte();
-        self.reader.consume(1);
-        b
+    pub fn solve(&mut self) {
     }
+}
 
-    fn skip_whitespaces(&mut self) {
-        loop {
-            if self.peek_next_byte().is_ascii_whitespace() {
-                self.reader.consume(1);
-            } else {
+fn main() {
+    let mut sc = Scanner::new();
+    let mut out = BufWriter::with_capacity(custom_io::IO_BUF_SIZE, std::io::stdout().lock());
+    let mut sol = Solution::with_io(sc, out);
+
+    loop {
+        sol.solve();
+//        let testcases: i32 = sol.sc.input();
+//        for testcase in 1..=testcases {
+//            dbg!("......", testcase);
+//            sol.solve();
+//        }
+
+        if sol.sc.stored_next_byte.is_none() {
+            break;
+        }
+        match std::env::args().collect::<Vec<_>>().get(1) {
+            Some(val) if *val == "-DEBUG".to_string() => {
+                writeln!(sol.out, "Next Input:").unwrap();
+            }
+            _ => {
                 break;
             }
         }
     }
-
-    pub fn input<T: std::str::FromStr>(&mut self) -> T
-    where
-        T::Err: std::fmt::Debug,
-    {
-        self.skip_whitespaces();
-        self.input_helper.clear();
-        loop {
-            let c = self.next_byte() as char;
-            if c.is_ascii_whitespace() {
-                return self.input_helper.parse::<T>().unwrap();
-            }
-            self.input_helper.push(c);
-        }
-    }
-
-    pub fn input_line(&mut self) -> String {
-        self.skip_whitespaces();
-        self.input_helper.clear();
-        loop {
-            let c = self.next_byte() as char;
-            if c == '\n' {
-                return self.input_helper.trim().to_string();
-            }
-            self.input_helper.push(c);
-        }
-    }
-}
-
-fn solve(sc: &mut Scanner, out: &mut BufWriter<StdoutLock>) {}
-
-fn main() {
-    let mut sc = Scanner::new();
-    let mut out = BufWriter::with_capacity(Scanner::IO_BUF_SIZE, std::io::stdout().lock());
-
-    solve(&mut sc, &mut out);
-
-    // let testcases: i32 = sc.input();
-    // for testcase in 1..=testcases {
-    //     eprintln!("Testcase: {testcase}");
-    //     solve(&mut sc, &mut out);
-    // }
 }
