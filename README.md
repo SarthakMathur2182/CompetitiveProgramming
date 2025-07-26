@@ -8,6 +8,7 @@ Currently, the DS/Algorithms covered:
 - [Template (With fast I/O)](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/Template)
 - [Sparse Table](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/SparseTable)
 - [Segment Tree](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/SegmentTree)
+- [Modular Arithmetic](https://github.com/SarthakMathur2182/CompetitiveProgramming/tree/main/ModInt)
 - Graph (In experiment, might remove later)
 
 More implementations might be covered in the future.
