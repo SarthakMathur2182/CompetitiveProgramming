@@ -34,7 +34,6 @@ pub mod math {
 }
 
 /// Binary Search
-/// Some of these functions can fail in of some extreme bounds (only if Midpoint was a trait instead of a macro)
 pub mod bs {
     use std::ops::{Add, Sub};
 

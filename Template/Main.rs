@@ -8,6 +8,47 @@
 #![allow(unused_imports)]
 use std::io::{BufWriter, StdoutLock, Write};
 
+fn main() {
+    let sc = Scanner::new();
+    let out = BufWriter::with_capacity(custom_io::IO_BUF_SIZE, std::io::stdout().lock());
+    let mut sol = Solution::with_io(sc, out);
+
+    loop {
+        sol.solve();
+        // let testcases: i32 = sol.sc.input();
+        // for testcase in 1..=testcases {
+        //     // dbg!("......", testcase);
+        //     let ans = sol.solve();
+        //     // writeln!(sol.out, "{}", ans).unwrap();
+        //
+        //     // if ans {
+        //     //     writeln!(sol.out, "Yes").unwrap();
+        //     // } else {
+        //     //     writeln!(sol.out, "No").unwrap();
+        //     // }
+        //
+        //     // for x in ans {
+        //     //     write!(sol.out, "{} ", x).unwrap();
+        //     //     writeln!(sol.out).unwrap();
+        //     // }
+        // }
+
+        sol.sc.skip_whitespaces();
+        if sol.sc.stored_next_byte.is_none() {
+            break;
+        }
+        match std::env::args().collect::<Vec<_>>().get(1) {
+            Some(val) if *val == "-DEBUG".to_string() => {
+                writeln!(sol.out, "Next Input:").unwrap();
+                dbg!("Next Input:");
+            }
+            _ => {
+                break;
+            }
+        }
+    }
+}
+
 pub mod custom_io {
     use std::io::{BufRead, BufReader, StdinLock};
 
@@ -44,7 +85,7 @@ pub mod custom_io {
             b
         }
 
-        fn skip_whitespaces(&mut self) {
+        pub fn skip_whitespaces(&mut self) {
             while let Some(b) = self.stored_next_byte {
                 if b.is_ascii_whitespace() {
                     self.next_byte();
@@ -91,6 +132,10 @@ pub mod custom_io {
 }
 use custom_io::Scanner;
 
+pub mod modules {
+}
+use modules::*;
+
 struct Solution<'io> {
     sc: Scanner<'io>,
     out: BufWriter<StdoutLock<'io>>,
@@ -100,33 +145,5 @@ impl<'io> Solution<'io> {
         Self { sc, out }
     }
 
-    pub fn solve(&mut self) {
-    }
-}
-
-fn main() {
-    let mut sc = Scanner::new();
-    let mut out = BufWriter::with_capacity(custom_io::IO_BUF_SIZE, std::io::stdout().lock());
-    let mut sol = Solution::with_io(sc, out);
-
-    loop {
-        sol.solve();
-//        let testcases: i32 = sol.sc.input();
-//        for testcase in 1..=testcases {
-//            dbg!("......", testcase);
-//            sol.solve();
-//        }
-
-        if sol.sc.stored_next_byte.is_none() {
-            break;
-        }
-        match std::env::args().collect::<Vec<_>>().get(1) {
-            Some(val) if *val == "-DEBUG".to_string() => {
-                writeln!(sol.out, "Next Input:").unwrap();
-            }
-            _ => {
-                break;
-            }
-        }
-    }
+    pub fn solve(&mut self) {}
 }
