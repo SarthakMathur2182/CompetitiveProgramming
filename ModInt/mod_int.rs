@@ -248,8 +248,8 @@ pub mod math {
 
         /// The factorials are present till `N-1` only, so initialize N accordingly.
         pub struct Combinatorics<M: modulos::Modulo, const N: usize> {
-            factorial: Box<[ModInt<M>; N]>,
-            inverse_factorial: Box<[ModInt<M>; N]>,
+            factorial: Vec<ModInt<M>>,
+            inverse_factorial: Vec<ModInt<M>>,
         }
 
         impl<M: modulos::Modulo, const N: usize> Combinatorics<M, N> {
@@ -257,11 +257,11 @@ pub mod math {
             where
                 M::OpT: From<u32>,
             {
-                let mut factorial = Box::new([ModInt::<M>::mul_one(); N]);
+                let mut factorial = vec![ModInt::<M>::mul_one(); N];
                 for i in 1..N {
                     factorial[i] = factorial[i - 1] * ModInt::from(i as u32);
                 }
-                let mut inverse_factorial = Box::new([ModInt::<M>::mul_one(); N]);
+                let mut inverse_factorial = vec![ModInt::<M>::mul_one(); N];
                 inverse_factorial[N - 1] = factorial[N - 1].mul_inv();
                 for i in (0..N - 1).rev() {
                     inverse_factorial[i] = inverse_factorial[i + 1] * ModInt::from(i as u32 + 1);
@@ -295,9 +295,12 @@ pub mod math {
                 I: TryInto<usize>,
                 <I as TryInto<usize>>::Error: Debug,
             {
+                if n.try_into().is_err() || r.try_into().is_err() {
+                    return ModInt::default();
+                }
                 let n = n.try_into().unwrap();
                 let r = r.try_into().unwrap();
-                if r < 0 || r > n {
+                if r > n {
                     ModInt::default()
                 } else {
                     self.factorial[n] * self.inverse_factorial[r] * self.inverse_factorial[n - r]
@@ -310,9 +313,12 @@ pub mod math {
                 I: TryInto<usize>,
                 <I as TryInto<usize>>::Error: Debug,
             {
+                if n.try_into().is_err() || r.try_into().is_err() {
+                    return ModInt::default();
+                }
                 let n = n.try_into().unwrap();
                 let r = r.try_into().unwrap();
-                if r < 0 || r > n {
+                if r > n {
                     ModInt::default()
                 } else {
                     self.factorial[n] * self.inverse_factorial[n - r]

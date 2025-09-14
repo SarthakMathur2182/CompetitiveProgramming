@@ -121,7 +121,7 @@ pub mod custom_io {
 
             self.input_helper.clear();
             while let Some(c) = self.next_byte() {
-                if c.is_ascii_whitespace() {
+                if c == b'\n' || c == b'\r' {
                     break;
                 }
                 self.input_helper.push(c as char);
