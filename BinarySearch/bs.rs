@@ -1,39 +1,6 @@
-pub mod math {
-    pub mod custom_math_traits {
-        pub trait MultiplicativeIdentity {
-            fn mul_one() -> Self;
-        }
-        macro_rules! impl_multiplicative_identity_for_primitives {
-            ($($t:ty),*) => {
-                $(impl MultiplicativeIdentity for $t {
-                    fn mul_one() -> Self {
-                        1
-                    }
-                })*
-            };
-        }
-        impl_multiplicative_identity_for_primitives!(
-            u8, u16, u32, u64, usize, i8, i16, i32, i64, isize
-        );
-
-        // Currently using Default for Zero / AdditiveIdentity
-
-        pub trait Midpoint {
-            fn midpoint(a: Self, b: Self) -> Self;
-        }
-        macro_rules! impl_midpoint_trait_for_primitives {
-            ($($t:ty),*) => {
-                $(impl Midpoint for $t {fn midpoint(a: Self, b: Self) -> Self {
-                    a.midpoint(b)
-                }
-                })*
-            };
-        }
-        impl_midpoint_trait_for_primitives!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
-    }
-}
-
-/// Binary Search
+/// # Binary Search ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/BinarySearch/bs.rs))
+///
+/// You'll need the traits in module [math.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/CombinedRustModules/math.rs) to use the same.
 pub mod bs {
     use std::ops::{Add, Sub};
 
@@ -46,13 +13,13 @@ pub mod bs {
             + super::math::custom_math_traits::Midpoint,
         F: FnMut(T) -> bool,
     {
-        r = r + T::mul_one();
+        r = r + T::ONE;
         while l < r {
             let m = T::midpoint(l, r);
             if predicate(m) {
                 r = m;
             } else {
-                l = m + T::mul_one();
+                l = m + T::ONE;
             }
         }
 
@@ -69,7 +36,7 @@ pub mod bs {
             + Sub<Output = T>,
         F: FnMut(T) -> bool,
     {
-        first_true(l, r, predicate) - T::mul_one()
+        first_true(l, r, predicate) - T::ONE
     }
 
     pub fn first_false<T, F>(l: T, r: T, mut predicate: F) -> T
