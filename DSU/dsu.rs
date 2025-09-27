@@ -1,4 +1,4 @@
-pub mod ds {
+pub mod dsu {
     pub struct DSU {
         nodes: Vec<i32>,
     }
@@ -36,4 +36,4 @@ pub mod ds {
         }
     }
 }
-use ds::DSU;
+use dsu::DSU;
