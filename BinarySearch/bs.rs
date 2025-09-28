@@ -13,13 +13,13 @@ pub mod bs {
             + super::math::custom_math_traits::Midpoint,
         F: FnMut(T) -> bool,
     {
-        r = r + T::ONE;
+        r = r + T::one();
         while l < r {
             let m = T::midpoint(l, r);
             if predicate(m) {
                 r = m;
             } else {
-                l = m + T::ONE;
+                l = m + T::one();
             }
         }
 
@@ -36,7 +36,7 @@ pub mod bs {
             + Sub<Output = T>,
         F: FnMut(T) -> bool,
     {
-        first_true(l, r, predicate) - T::ONE
+        first_true(l, r, predicate) - T::one()
     }
 
     pub fn first_false<T, F>(l: T, r: T, mut predicate: F) -> T

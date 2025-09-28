@@ -165,7 +165,9 @@ pub mod mod_int {
     }
 
     impl<M: modulos::Modulo> MultiplicativeIdentity for ModInt<M> {
-        const ONE: Self = ModInt::from(M::T::ONE);
+        fn one() -> Self {
+            ModInt::from(M::T::one())
+        }
     }
 
     impl<M: modulos::Modulo> MultiplicativeInverse for ModInt<M> {
@@ -215,11 +217,11 @@ pub mod mod_int {
         where
             M::OpT: From<u32>,
         {
-            let mut factorial = vec![ModInt::<M>::ONE; N];
+            let mut factorial = vec![ModInt::<M>::one(); N];
             for i in 1..N {
                 factorial[i] = factorial[i - 1] * ModInt::from(i as u32);
             }
-            let mut inverse_factorial = vec![ModInt::<M>::ONE; N];
+            let mut inverse_factorial = vec![ModInt::<M>::one(); N];
             inverse_factorial[N - 1] = factorial[N - 1].mul_inv();
             for i in (0..N - 1).rev() {
                 inverse_factorial[i] = inverse_factorial[i + 1] * ModInt::from(i as u32 + 1);

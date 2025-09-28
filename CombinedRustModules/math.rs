@@ -3,12 +3,14 @@ pub mod math {
 
     pub mod custom_math_traits {
         pub trait MultiplicativeIdentity {
-            const ONE: Self;
+            fn one() -> Self;
         }
         macro_rules! impl_multiplicative_identity_for_integer_primitives {
             ($($t:ty),*) => {
                 $(impl MultiplicativeIdentity for $t {
-                    const ONE: Self = 1 as $t;
+                    fn one() -> Self {
+                        1 as $t
+                    }
                 })*
             };
         }
@@ -63,7 +65,7 @@ pub mod math {
         T: custom_math_traits::MultiplicativeIdentity + Mul<Output = T> + Copy,
         P: Copy + PartialOrd + Default + BitAnd<Output = P> + ShrAssign + From<u8> + PartialEq,
     {
-        let mut res = T::ONE;
+        let mut res = T::one();
         while exp > P::default() {
             if (exp & P::from(1u8)) == P::from(1u8) {
                 res = res * base;
@@ -72,6 +74,37 @@ pub mod math {
             exp >>= P::from(1u8);
         }
         res
+    }
+
+    /// *ans *= T.pow(P)
+    ///
+    /// Mostly used in case we don't implement Multiplicative identity (in Matrix for example).
+    pub fn pow_multiplied_to<T, P>(mut base: T, mut exp: P, ans: &mut T)
+    where
+        T: Mul<Output = T> + Clone,
+        P: Copy
+            + PartialOrd
+            + Default
+            + BitAnd<Output = P>
+            + ShrAssign
+            + From<u8>
+            + PartialEq
+            + SubAssign,
+    {
+        assert!(exp >= P::default(), "Negative power not supported!");
+        if exp == P::default() {
+            return;
+        }
+        let mut curr = base.clone();
+        exp -= P::from(1u8);
+        while exp > P::default() {
+            if (exp & P::from(1u8)) == P::from(1u8) {
+                curr = curr * base.clone();
+            }
+            base = base.clone() * base;
+            exp >>= P::from(1u8);
+        }
+        *ans = ans.clone() * curr;
     }
 
     // Credits: https://codeforces.com/blog/entry/91800
