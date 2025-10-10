@@ -12,20 +12,21 @@ pub mod fenwick {
             }
         }
 
-        pub fn add(&mut self, mut i: usize, x: T) {
-            i += 1;
-            while i < self.tree.len() {
-                self.tree[i] += x;
-                i += (i as isize & -(i as isize)) as usize;
+        pub fn add(&mut self, i: usize, x: T) {
+            let mut i = i as isize + 1;
+            let len = self.tree.len() as isize;
+            while i < len {
+                self.tree[i as usize] += x;
+                i += i & -i;
             }
         }
 
-        pub fn get(&self, mut i: usize) -> T {
+        pub fn get(&self, i: usize) -> T {
             let mut ans = T::default();
-            i += 1;
+            let mut i = i as isize + 1;
             while i > 0 {
-                ans += self.tree[i];
-                i -= (i as isize & -(i as isize)) as usize;
+                ans += self.tree[i as usize];
+                i -= i & -i;
             }
             ans
         }
