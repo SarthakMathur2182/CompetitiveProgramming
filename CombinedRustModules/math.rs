@@ -1,5 +1,5 @@
 pub mod math {
-    use std::ops::{BitAnd, Mul, ShrAssign, SubAssign};
+    use std::ops::{BitAnd, Mul, Rem, ShrAssign, SubAssign};
 
     pub mod custom_math_traits {
         pub trait MultiplicativeIdentity {
@@ -60,12 +60,12 @@ pub mod math {
         );
     }
 
-    pub fn pow<T, P>(mut base: T, mut exp: P) -> T
+    pub fn pow_with_identity<T, P>(mut base: T, mut exp: P, identity: T) -> T
     where
-        T: custom_math_traits::MultiplicativeIdentity + Mul<Output = T> + Copy,
+        T: Mul<Output = T> + Copy,
         P: Copy + PartialOrd + Default + BitAnd<Output = P> + ShrAssign + From<u8> + PartialEq,
     {
-        let mut res = T::one();
+        let mut res = identity;
         while exp > P::default() {
             if (exp & P::from(1u8)) == P::from(1u8) {
                 res = res * base;
@@ -76,12 +76,29 @@ pub mod math {
         res
     }
 
+    pub fn pow<T, P>(mut base: T, mut exp: P) -> T
+    where
+        T: custom_math_traits::MultiplicativeIdentity + Mul<Output = T> + Copy,
+        P: Copy + PartialOrd + Default + BitAnd<Output = P> + ShrAssign + From<u8> + PartialEq,
+    {
+        pow_with_identity(T, P, T::one());
+    }
+
     // Credits: https://codeforces.com/blog/entry/91800
     pub fn gcd<T: Default + std::ops::Rem<Output = T> + PartialEq + Copy>(a: T, b: T) -> T {
         if b == T::default() {
             return a;
         }
         gcd(b, a % b)
+    }
+
+    pub fn lcm<
+        T: Default + Rem<Output = T> + PartialEq + Copy + Div<Output = T> + Mul<Output = T>,
+    >(
+        a: T,
+        b: T,
+    ) -> T {
+        a / gcd(a, b) * b
     }
 }
 use custom_math_traits::*;

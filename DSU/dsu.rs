@@ -1,7 +1,9 @@
+/// # DSU ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/DSU/dsu.rs))
 pub mod dsu {
     pub struct DSU {
         nodes: Vec<i32>,
     }
+
     impl DSU {
         pub fn new(n: usize) -> Self {
             Self { nodes: vec![-1; n] }
@@ -15,9 +17,9 @@ pub mod dsu {
             self.nodes[a] as usize
         }
 
-        pub fn size(&mut self, a: usize) -> i32 {
+        pub fn size(&mut self, a: usize) -> u32 {
             let par = self.parent(a);
-            -self.nodes[par]
+            -self.nodes[par] as u32
         }
 
         pub fn merge(&mut self, a: usize, b: usize) -> bool {
@@ -35,5 +37,7 @@ pub mod dsu {
             true
         }
     }
+
+    // TODO: Rollback
 }
 use dsu::DSU;
