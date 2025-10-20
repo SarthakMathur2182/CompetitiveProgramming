@@ -4,13 +4,31 @@
 pub mod bs {
     use std::ops::{Add, Sub};
 
+    // TODO: Replace this once https://github.com/rust-lang/rust/issues/41517 is solved
+    trait BinarySearchRangeType:
+        Copy
+        + std::ops::Add<Output = Self>
+        + super::MultiplicativeIdentity
+        + PartialOrd
+        + super::Midpoint
+        + std::ops::Sub<Output = Self>
+    {
+    }
+
+    impl<
+        T: Copy
+            + std::ops::Add<Output = Self>
+            + super::MultiplicativeIdentity
+            + PartialOrd
+            + super::Midpoint
+            + std::ops::Sub<Output = Self>,
+    > BinarySearchRangeType for T
+    {
+    }
+
     pub fn first_true<T, F>(mut l: T, mut r: T, mut predicate: F) -> T
     where
-        T: Copy
-            + Add<Output = T>
-            + super::math::custom_math_traits::MultiplicativeIdentity
-            + PartialOrd
-            + super::math::custom_math_traits::Midpoint,
+        T: BinarySearchRangeType,
         F: FnMut(T) -> bool,
     {
         r = r + T::one();
@@ -28,12 +46,7 @@ pub mod bs {
 
     pub fn last_false<T, F>(l: T, r: T, predicate: F) -> T
     where
-        T: Copy
-            + Add<Output = T>
-            + super::math::custom_math_traits::MultiplicativeIdentity
-            + PartialOrd
-            + super::math::custom_math_traits::Midpoint
-            + Sub<Output = T>,
+        T: BinarySearchRangeType,
         F: FnMut(T) -> bool,
     {
         first_true(l, r, predicate) - T::one()
@@ -41,11 +54,7 @@ pub mod bs {
 
     pub fn first_false<T, F>(l: T, r: T, mut predicate: F) -> T
     where
-        T: Copy
-            + Add<Output = T>
-            + super::math::custom_math_traits::MultiplicativeIdentity
-            + PartialOrd
-            + super::math::custom_math_traits::Midpoint,
+        T: BinarySearchRangeType,
         F: FnMut(T) -> bool,
     {
         first_true(l, r, |t| !predicate(t))
@@ -53,14 +62,73 @@ pub mod bs {
 
     pub fn last_true<T, F>(l: T, r: T, mut predicate: F) -> T
     where
-        T: Copy
-            + Add<Output = T>
-            + super::math::custom_math_traits::MultiplicativeIdentity
-            + PartialOrd
-            + super::math::custom_math_traits::Midpoint
-            + Sub<Output = T>,
+        T: BinarySearchRangeType,
         F: FnMut(T) -> bool,
     {
         last_false(l, r, |t| !predicate(t))
+    }
+
+    pub fn first_true_floating_with_epsilon<F>(
+        l: f64,
+        r: f64,
+        epsilon: f64,
+        mut predicate: F,
+    ) -> f64
+    where
+        F: FnMut(f64) -> bool,
+    {
+        while r - l > epsilon {
+            let m = l.midpoint(r);
+            if predicate(m) {
+                r = m;
+            } else {
+                l = m;
+            }
+        }
+        r
+    }
+
+    pub fn first_false_floating_with_epsilon<F>(
+        l: f64,
+        r: f64,
+        epsilon: f64,
+        mut predicate: F,
+    ) -> f64
+    where
+        F: FnMut(f64) -> bool,
+    {
+        first_true_floating_with_epsilon(l, r, epsilon, |t| !predicate(t))
+    }
+
+    pub fn first_true_floating_with_iterations<F>(
+        l: f64,
+        r: f64,
+        iterations: f64,
+        mut predicate: F,
+    ) -> f64
+    where
+        F: FnMut(f64) -> bool,
+    {
+        for _ in 0..iterations {
+            let m = l.midpoint(r);
+            if predicate(m) {
+                r = m;
+            } else {
+                l = m;
+            }
+        }
+        r
+    }
+
+    pub fn first_false_floating_with_iterations<F>(
+        l: f64,
+        r: f64,
+        iterations: f64,
+        mut predicate: F,
+    ) -> f64
+    where
+        F: FnMut(f64) -> bool,
+    {
+        first_true_floating_with_iterations(l, r, iterations, |t| !predicate(t))
     }
 }
