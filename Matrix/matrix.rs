@@ -5,6 +5,13 @@ pub mod matrix {
     use std::fmt::{Debug, Error, Formatter};
     use std::ops::{Add, AddAssign, BitAnd, Mul, MulAssign, Neg, ShrAssign, Sub, SubAssign};
 
+    /// Please note that the arithmetic operations are implemented slightly different for matrices.
+    ///
+    /// Instead of writing:
+    /// `let sum = mat1 + mat2`
+    ///
+    /// Write:
+    /// `let sum = &mat1 + &mat2`
     #[derive(Clone)]
     pub struct Matrix<T: Clone> {
         pub n: usize,
