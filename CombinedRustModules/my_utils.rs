@@ -18,5 +18,19 @@ pub mod my_utils {
         };
         (l, r)
     }
+
+    pub fn coordinate_compression<T: Clone + Ord>(a: &[T]) -> (Vec<u32>, Vec<T>) {
+        let mut comp_to_val = a.to_vec();
+        comp_to_val.sort_unstable();
+        comp_to_val.dedup();
+
+        let n = a.len();
+        let mut ans = vec![0; n];
+        for i in 0..n {
+            ans[i] = comp_to_val.binary_search(&a[i]).unwrap() as u32;
+        }
+
+        (ans, comp_to_val)
+    }
 }
 use my_utils::*;
