@@ -1,9 +1,8 @@
 /// # Binary Search ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/BinarySearch/bs.rs))
 ///
 /// You'll need the traits in module [math.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/CombinedRustModules/math.rs) to use the same.
+#[allow(private_bounds)]
 pub mod bs {
-    use std::ops::{Add, Sub};
-
     // TODO: Replace this once https://github.com/rust-lang/rust/issues/41517 is solved
     trait BinarySearchRangeType:
         Copy
@@ -69,8 +68,8 @@ pub mod bs {
     }
 
     pub fn first_true_floating_with_epsilon<F>(
-        l: f64,
-        r: f64,
+        mut l: f64,
+        mut r: f64,
         epsilon: f64,
         mut predicate: F,
     ) -> f64
@@ -101,9 +100,9 @@ pub mod bs {
     }
 
     pub fn first_true_floating_with_iterations<F>(
-        l: f64,
-        r: f64,
-        iterations: f64,
+        mut l: f64,
+        mut r: f64,
+        iterations: u32,
         mut predicate: F,
     ) -> f64
     where
@@ -123,7 +122,7 @@ pub mod bs {
     pub fn first_false_floating_with_iterations<F>(
         l: f64,
         r: f64,
-        iterations: f64,
+        iterations: u32,
         mut predicate: F,
     ) -> f64
     where

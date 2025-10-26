@@ -1,5 +1,5 @@
 pub mod math {
-    use std::ops::{BitAnd, Mul, Rem, ShrAssign, SubAssign};
+    use std::ops::{BitAnd, Div, Mul, Rem, ShrAssign};
 
     pub mod custom_math_traits {
         pub trait MultiplicativeIdentity {
@@ -76,16 +76,16 @@ pub mod math {
         res
     }
 
-    pub fn pow<T, P>(mut base: T, mut exp: P) -> T
+    pub fn pow<T, P>(base: T, exp: P) -> T
     where
         T: custom_math_traits::MultiplicativeIdentity + Mul<Output = T> + Copy,
         P: Copy + PartialOrd + Default + BitAnd<Output = P> + ShrAssign + From<u8> + PartialEq,
     {
-        pow_with_identity(T, P, T::one());
+        pow_with_identity(base, exp, T::one())
     }
 
     // Credits: https://codeforces.com/blog/entry/91800
-    pub fn gcd<T: Default + std::ops::Rem<Output = T> + PartialEq + Copy>(a: T, b: T) -> T {
+    pub fn gcd<T: Default + Rem<Output = T> + PartialEq + Copy>(a: T, b: T) -> T {
         if b == T::default() {
             return a;
         }
