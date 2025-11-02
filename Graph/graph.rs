@@ -1,5 +1,5 @@
 pub mod graph {
-    #[derive(Debug)]
+    #[derive(Debug, Copy, Clone, Eq, PartialEq)]
     enum NodeVisitStatus {
         NotVisited,
         Visiting,
@@ -93,7 +93,7 @@ pub mod graph {
                     continue;
                 }
 
-                // self.parent[v] = u;
+                // self.parent[v] = u as u32;
                 // self.depth[v] = self.depth[u] + 1;
                 self.dfs(v, Some(u));
                 // self.tour.push(u as u32);
