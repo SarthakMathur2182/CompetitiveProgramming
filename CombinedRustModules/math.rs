@@ -47,17 +47,48 @@ pub mod math {
         pub trait Midpoint {
             fn midpoint(a: Self, b: Self) -> Self;
         }
-        macro_rules! impl_midpoint_trait_for_primitives {
+        // a.midpoint(b) is released in a quite latest version of rust.
+        // Currently copying this from the rust library code.
+        macro_rules! impl_midpoint_trait_for_unsigned_primitives {
             ($($t:ty),*) => {
                 $(impl Midpoint for $t {fn midpoint(a: Self, b: Self) -> Self {
-                    a.midpoint(b)
+                    ((a ^ b) >> 1) + (a & b)
                 }
                 })*
             };
         }
-        impl_midpoint_trait_for_primitives!(
-            u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64
-        );
+        impl_midpoint_trait_for_unsigned_primitives!(u8, u16, u32, u64, u128, usize);
+        macro_rules! impl_midpoint_trait_for_signed_primitives {
+            ($($t:ty),*) => {
+                $(impl Midpoint for $t {fn midpoint(a: Self, b: Self) -> Self {
+                    let ans = ((a ^ b) >> 1) + (a & b);
+                    ans + (if ans < 0 { 1 } else { 0 } & (a ^ b))
+                }
+                })*
+            };
+        }
+        impl_midpoint_trait_for_signed_primitives!(i8, i16, i32, i64, i128, isize);
+        macro_rules! impl_midpoint_trait_for_floating_primitives {
+            ($($t:ty),*) => {
+                $(impl Midpoint for $t {fn midpoint(a: Self, b: Self) -> Self {
+                    a / 2 as $t + b / 2 as $t
+                }
+                })*
+            };
+        }
+        impl_midpoint_trait_for_floating_primitives!(f32, f64);
+        // TODO: Use this once the online judges update their version
+        // macro_rules! impl_midpoint_trait_for_primitives {
+        //     ($($t:ty),*) => {
+        //         $(impl Midpoint for $t {fn midpoint(a: Self, b: Self) -> Self {
+        //             a.midpoint(b)
+        //         }
+        //         })*
+        //     };
+        // }
+        // impl_midpoint_trait_for_primitives!(
+        //     u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64
+        // );
     }
 
     pub fn pow_with_identity<T, P>(mut base: T, mut exp: P, identity: T) -> T

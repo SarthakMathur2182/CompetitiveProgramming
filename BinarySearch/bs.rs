@@ -3,13 +3,15 @@
 /// You'll need the traits in module [math.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/CombinedRustModules/math.rs) to use the same.
 #[allow(private_bounds)]
 pub mod bs {
+    use super::{Midpoint, MultiplicativeIdentity};
+
     // TODO: Replace this once https://github.com/rust-lang/rust/issues/41517 is solved
     trait BinarySearchRangeType:
         Copy
         + std::ops::Add<Output = Self>
-        + super::MultiplicativeIdentity
+        + MultiplicativeIdentity
         + PartialOrd
-        + super::Midpoint
+        + Midpoint
         + std::ops::Sub<Output = Self>
     {
     }
@@ -17,9 +19,9 @@ pub mod bs {
     impl<
         T: Copy
             + std::ops::Add<Output = Self>
-            + super::MultiplicativeIdentity
+            + MultiplicativeIdentity
             + PartialOrd
-            + super::Midpoint
+            + Midpoint
             + std::ops::Sub<Output = Self>,
     > BinarySearchRangeType for T
     {
@@ -77,7 +79,7 @@ pub mod bs {
         F: FnMut(f64) -> bool,
     {
         while r - l > epsilon {
-            let m = l.midpoint(r);
+            let m = <f64 as Midpoint>::midpoint(l, r);
             if predicate(m) {
                 r = m;
             } else {
@@ -109,7 +111,7 @@ pub mod bs {
         F: FnMut(f64) -> bool,
     {
         for _ in 0..iterations {
-            let m = l.midpoint(r);
+            let m = <f64 as Midpoint>::midpoint(l, r);
             if predicate(m) {
                 r = m;
             } else {
