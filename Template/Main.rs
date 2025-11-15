@@ -18,6 +18,8 @@ fn main() {
         // let testcases: i32 = sol.sc.input();
         // for testcase in 1..=testcases {
         //     // dbg!("......", testcase);
+        //
+        //     // write!(sol.out, "Case #{}: ", testcase).unwrap();
         //     let ans = sol.solve();
         //     // writeln!(sol.out, "{}", ans).unwrap();
         //
@@ -131,10 +133,6 @@ pub mod custom_io {
     }
 }
 use custom_io::Scanner;
-
-pub mod modules {
-}
-use modules::*;
 
 struct Solution<'io> {
     sc: Scanner<'io>,
