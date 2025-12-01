@@ -76,7 +76,7 @@ pub mod seg_tree {
             if ql > r || qr < l {
                 return Ops::DATA_IDENTITY;
             }
-            if l <= ql && qr <= r {
+            if ql <= l && r <= qr {
                 return self.nodes[v].clone();
             }
 

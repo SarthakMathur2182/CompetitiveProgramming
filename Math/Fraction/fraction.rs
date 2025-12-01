@@ -1,5 +1,6 @@
 pub mod fraction {
     use super::custom_math_traits::{MultiplicativeIdentity, MultiplicativeInverse};
+    use std::cmp::Ordering;
     use std::convert::TryInto;
     use std::fmt::{Debug, Display, Formatter};
     use std::marker::PhantomData;
@@ -46,7 +47,7 @@ pub mod fraction {
     }
 
     /// OpT is the operation type, mainly for addition and multiplication
-    #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq)]
+    #[derive(Copy, Clone, Eq, PartialEq)]
     pub struct Fraction<T: FractionOperationType, OpT: FractionOperationType + From<T> + TryInto<T>> {
         pub num: T,
         pub den: T,
@@ -238,6 +239,16 @@ pub mod fraction {
     {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(f, "{}/{}", self.num, self.den)
+        }
+    }
+
+    impl<T: FractionOperationType, OpT: FractionOperationType + From<T> + TryInto<T>> Ord
+        for Fraction<T, OpT>
+    {
+        fn cmp(&self, other: &Self) -> Ordering {
+            let x = OpT::from(self.num) * OpT::from(other.den);
+            let y = OpT::from(self.den) * OpT::from(other.num);
+            x.cmp(y)
         }
     }
 }
