@@ -4,14 +4,13 @@
 ///
 /// You'll need the module [my_utils.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/CombinedRustModules/my_utils.rs) to use the same.
 pub mod seg_tree {
-    use std::collections::Bound;
     use std::fmt::{Debug, Formatter};
     use std::ops::RangeBounds;
 
     pub trait SegmentTreeOperations {
         type Data: Clone;
 
-        const DATA_IDENTITY: Self::Data;
+        fn data_identity() -> Self::Data;
 
         /// The binary operator which we'll apply on the tree.
         fn merge(a: &Self::Data, b: &Self::Data) -> Self::Data;
@@ -38,10 +37,10 @@ pub mod seg_tree {
             Self::with_func(nodes.len(), |i| nodes[i].clone())
         }
 
-        /// Initialize the nodes with `Ops::DATA_IDENTITY`
+        /// Initialize the nodes with `Ops::data_identity()`
         pub fn with_defaults(n: usize) -> Self {
             let capacity = n.next_power_of_two();
-            let nodes = vec![Ops::DATA_IDENTITY; capacity << 1];
+            let nodes = vec![Ops::data_identity(); capacity << 1];
             Self { n, capacity, nodes }
         }
 
@@ -74,7 +73,7 @@ pub mod seg_tree {
 
         fn _query(&self, v: usize, l: usize, r: usize, ql: usize, qr: usize) -> Ops::Data {
             if ql > r || qr < l {
-                return Ops::DATA_IDENTITY;
+                return Ops::data_identity();
             }
             if ql <= l && r <= qr {
                 return self.nodes[v].clone();
@@ -85,6 +84,44 @@ pub mod seg_tree {
                 &self._query(v << 1, l, m, ql, qr),
                 &self._query(v << 1 | 1, m + 1, r, ql, qr),
             )
+        }
+
+        /// Query without computing/merging nodes, and allows to use the nodes in the `access_node` function.
+        ///
+        /// Probably need a better name.
+        ///
+        /// TODO: Try to create an iterator over nodes accessing l..=r
+        pub fn query2<R, F>(&self, range: R, mut access_node: F)
+        where
+            R: RangeBounds<usize>,
+            F: FnMut(&Ops::Data),
+        {
+            let (l, r) = super::get_inclusive_usize_bounds(&range, self.capacity);
+            self._query2(1, 0, self.capacity - 1, l, r, &mut access_node);
+        }
+
+        fn _query2<F>(
+            &self,
+            v: usize,
+            l: usize,
+            r: usize,
+            ql: usize,
+            qr: usize,
+            access_node: &mut F,
+        ) where
+            F: FnMut(&Ops::Data),
+        {
+            if ql > r || qr < l {
+                return;
+            }
+            if ql <= l && r <= qr {
+                access_node(&self.nodes[v]);
+                return;
+            }
+
+            let m = (l + r) >> 1;
+            self._query2(v << 1, l, m, ql, qr, access_node);
+            self._query2(v << 1 | 1, m + 1, r, ql, qr, access_node);
         }
 
         /// Point-update in the Segment Tree. The function `updateTo` allows multiple types of updates.
@@ -121,7 +158,7 @@ pub mod seg_tree {
     pub trait LazySegmentTreeOperations: SegmentTreeOperations {
         type Lazy: Clone;
 
-        const LAZY_IDENTITY: Self::Lazy;
+        fn lazy_identity() -> Self::Lazy;
 
         /// Apply the lazy update on the data.
         ///
@@ -159,11 +196,11 @@ pub mod seg_tree {
             Self::with_func(nodes.len(), |i| nodes[i].clone())
         }
 
-        /// Initialize the nodes with `Ops::DATA_IDENTITY` and `Ops::LAZY_IDENTITY`
+        /// Initialize the nodes with `Ops::data_identity()` and `Ops::lazy_identity()`
         pub fn with_defaults(n: usize) -> Self {
             let capacity = n.next_power_of_two();
-            let data_nodes = vec![Ops::DATA_IDENTITY; capacity << 1];
-            let lazy_nodes = vec![Ops::LAZY_IDENTITY; capacity << 1];
+            let data_nodes = vec![Ops::data_identity(); capacity << 1];
+            let lazy_nodes = vec![Ops::lazy_identity(); capacity << 1];
             Self {
                 n,
                 capacity,
@@ -201,7 +238,7 @@ pub mod seg_tree {
             let update_to = self.lazy_nodes[v].clone();
             self.apply_at(v << 1, l, m, &update_to);
             self.apply_at(v << 1 | 1, m + 1, r, &update_to);
-            self.lazy_nodes[v] = Ops::LAZY_IDENTITY;
+            self.lazy_nodes[v] = Ops::lazy_identity();
         }
 
         /// Range query over `range`
@@ -215,7 +252,7 @@ pub mod seg_tree {
 
         fn _query(&mut self, v: usize, l: usize, r: usize, ql: usize, qr: usize) -> Ops::Data {
             if ql > r || qr < l {
-                return Ops::DATA_IDENTITY;
+                return Ops::data_identity();
             }
             if ql <= l && r <= qr {
                 return self.data_nodes[v].clone();
@@ -227,6 +264,45 @@ pub mod seg_tree {
                 &self._query(v << 1, l, m, ql, qr),
                 &self._query(v << 1 | 1, m + 1, r, ql, qr),
             )
+        }
+
+        /// Query without computing/merging nodes, and allows to use the nodes in the `access_node` function.
+        ///
+        /// Probably need a better name.
+        ///
+        /// TODO: Try to create an iterator over nodes accessing l..=r
+        pub fn query2<R, F>(&self, range: R, mut access_node: F)
+        where
+            R: RangeBounds<usize>,
+            F: FnMut(&Ops::Data),
+        {
+            let (l, r) = super::get_inclusive_usize_bounds(&range, self.capacity);
+            self._query2(1, 0, self.capacity - 1, l, r, &mut access_node);
+        }
+
+        fn _query2<F>(
+            &self,
+            v: usize,
+            l: usize,
+            r: usize,
+            ql: usize,
+            qr: usize,
+            access_node: &mut F,
+        ) where
+            F: FnMut(&Ops::Data),
+        {
+            if ql > r || qr < l {
+                return;
+            }
+            if ql <= l && r <= qr {
+                access_node(&self.nodes[v]);
+                return;
+            }
+
+            self.push(v, l, r);
+            let m = (l + r) >> 1;
+            self._query2(v << 1, l, m, ql, qr, access_node);
+            self._query2(v << 1 | 1, m + 1, r, ql, qr, access_node);
         }
 
         /// Range update according to the lazy value `update_to`.
