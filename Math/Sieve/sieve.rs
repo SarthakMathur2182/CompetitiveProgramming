@@ -86,7 +86,7 @@ pub mod sieve {
             self.spf[n]
         }
 
-        pub fn smallest_prime_factor_big<T>(&self, n: T) -> u32
+        pub fn smallest_prime_factor_big<T>(&self, n: T) -> u64
         where
             T: TryInto<u64>,
             <T as TryInto<u64>>::Error: Debug,
@@ -99,11 +99,12 @@ pub mod sieve {
                 N * N
             );
             for &p in &self.primes {
-                if n % p as u64 == 0 {
+                let p = p as u64;
+                if n % p == 0 {
                     return p;
                 }
             }
-            unreachable!("It should've returned some prime number, or failed at the assertion!");
+            n
         }
 
         pub fn primes(&self) -> &Vec<u32> {
