@@ -155,6 +155,19 @@ pub mod seg_tree {
         }
     }
 
+    impl<Ops: SegmentTreeOperations> Debug for SegmentTree<Ops>
+    where
+        Ops::Data: Debug,
+    {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            for i in 1..self.capacity + self.n {
+                writeln!(f)?;
+                write!(f, "{}: {:?}", i, self.nodes[i])?;
+            }
+            Ok(())
+        }
+    }
+
     pub trait LazySegmentTreeOperations: SegmentTreeOperations {
         type Lazy: Clone;
 
@@ -271,7 +284,7 @@ pub mod seg_tree {
         /// Probably need a better name.
         ///
         /// TODO: Try to create an iterator over nodes accessing l..=r
-        pub fn query2<R, F>(&self, range: R, mut access_node: F)
+        pub fn query2<R, F>(&mut self, range: R, mut access_node: F)
         where
             R: RangeBounds<usize>,
             F: FnMut(&Ops::Data),
@@ -281,7 +294,7 @@ pub mod seg_tree {
         }
 
         fn _query2<F>(
-            &self,
+            &mut self,
             v: usize,
             l: usize,
             r: usize,
@@ -295,7 +308,7 @@ pub mod seg_tree {
                 return;
             }
             if ql <= l && r <= qr {
-                access_node(&self.nodes[v]);
+                access_node(&self.data_nodes[v]);
                 return;
             }
 
