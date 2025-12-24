@@ -66,24 +66,23 @@ pub mod seg_tree {
         where
             R: RangeBounds<usize>,
         {
-            let (l, r) = super::get_inclusive_usize_bounds(&range, self.capacity);
-
-            self._query(1, 0, self.capacity - 1, l, r)
-        }
-
-        fn _query(&self, v: usize, l: usize, r: usize, ql: usize, qr: usize) -> Ops::Data {
-            if ql > r || qr < l {
-                return Ops::data_identity();
+            let (mut l, mut r) = super::get_inclusive_usize_bounds(&range, self.capacity);
+            l += self.capacity;
+            r += self.capacity;
+            let mut ans = Ops::data_identity();
+            while l <= r {
+                if l & 1 == 1 {
+                    ans = Ops::merge(&self.nodes[l], &ans);
+                    l += 1;
+                }
+                if r & 1 == 0 {
+                    ans = Ops::merge(&ans, &self.nodes[r]);
+                    r -= 1;
+                }
+                l >>= 1;
+                r >>= 1;
             }
-            if ql <= l && r <= qr {
-                return self.nodes[v].clone();
-            }
-
-            let m = (l + r) >> 1;
-            Ops::merge(
-                &self._query(v << 1, l, m, ql, qr),
-                &self._query(v << 1 | 1, m + 1, r, ql, qr),
-            )
+            ans
         }
 
         /// Query without computing/merging nodes, and allows to use the nodes in the `access_node` function.
@@ -129,29 +128,16 @@ pub mod seg_tree {
         /// If we want to update the value to `x`, `updateTo = |c| x`
         ///
         /// If we want to increase the current value by `x`, `updateTo = |c| c + x`
-        pub fn update<F>(&mut self, pos: usize, update_to: F)
+        pub fn update<F>(&mut self, mut pos: usize, update_to: F)
         where
             F: Fn(Ops::Data) -> Ops::Data,
         {
-            self._update(1, 0, self.capacity - 1, pos, &update_to);
-        }
-
-        fn _update<F>(&mut self, v: usize, l: usize, r: usize, p: usize, update_to: &F)
-        where
-            F: Fn(Ops::Data) -> Ops::Data,
-        {
-            if p < l || p > r {
-                return;
+            pos += self.capacity;
+            self.nodes[pos] = update_to(self.nodes[pos].clone());
+            while pos > 1 {
+                self.nodes[pos >> 1] = Ops::merge(&self.nodes[pos], &self.nodes[pos ^ 1]);
+                pos >>= 1;
             }
-            if l == r {
-                self.nodes[v] = update_to(self.nodes[v].clone());
-                return;
-            }
-
-            let m = (l + r) >> 1;
-            self._update(v << 1, l, m, p, update_to);
-            self._update(v << 1 | 1, m + 1, r, p, update_to);
-            self.nodes[v] = Ops::merge(&self.nodes[v << 1], &self.nodes[v << 1 | 1]);
         }
     }
 
