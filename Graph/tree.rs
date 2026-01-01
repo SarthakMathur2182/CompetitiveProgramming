@@ -6,6 +6,7 @@ pub mod tree {
         // pub parent: Vec<u32>,
         // /// Depth of root is considered zero.
         // pub depth: Vec<u32>,
+        // pub size: Vec<u32>,
         // pub in_time: Vec<usize>,
         // pub out_time: Vec<usize>,
         // pub tour: Vec<u32>,
@@ -18,6 +19,7 @@ pub mod tree {
                 adj: vec![vec![]; n],
                 // parent: vec![0; n],
                 // depth: vec![0; n],
+                // size: vec![0; n],
                 // in_time: vec![0; n],
                 // out_time: vec![0; n],
                 // tour: Vec::with_capacity(n << 1),
@@ -32,6 +34,14 @@ pub mod tree {
         pub fn dfs(&mut self, u: usize, par: Option<usize>) {
             // self.in_time[u] = self.tour.len();
             // self.tour.push(u as u32);
+            // self.size[u] = 1;
+
+            // Removing the parent from the adjacency list
+            // if let Some(p) = par {
+            //     if let Some(i) = self.adj[u].iter().position(|x| *x == p as u32) {
+            //         self.adj[u].swap_remove(i);
+            //     }
+            // }
             for i in 0..self.adj[u].len() {
                 let v = self.adj[u][i] as usize;
                 if Some(v) == par {
@@ -41,6 +51,7 @@ pub mod tree {
                 // self.parent[v] = u as u32;
                 // self.depth[v] = self.depth[u] + 1;
                 self.dfs(v, Some(u));
+                // self.size[u] += self.size[v];
                 // self.tour.push(u as u32);
             }
             // self.out_time[u] = self.tour.len();
