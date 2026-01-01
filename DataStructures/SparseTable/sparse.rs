@@ -1,4 +1,4 @@
-/// # Sparse Table and RMQ ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/SparseTable/sparse.rs))
+/// # Sparse Table and RMQ ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/DataStructures/SparseTable/sparse.rs))
 ///
 /// You'll need the module [my_utils.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/CombinedRustModules/my_utils.rs) to use the same.
 pub mod sparse {

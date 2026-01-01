@@ -1,3 +1,6 @@
+/// # Interval Container ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/DataStructures/IntervalContainer/interval_container.rs))
+///
+/// Will add some utils (like removing interval).
 pub mod interval_container {
     use std::collections::BTreeSet;
     use std::ops::Bound::{Included, Unbounded};

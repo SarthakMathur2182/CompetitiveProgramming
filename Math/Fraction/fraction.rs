@@ -1,3 +1,6 @@
+/// # Fraction ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Math/Fraction/fraction.rs))
+///
+/// You'll need the traits in module [math.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/CombinedRustModules/math.rs) to use the same.
 pub mod fraction {
     use super::custom_math_traits::{MultiplicativeIdentity, MultiplicativeInverse};
     use std::cmp::Ordering;

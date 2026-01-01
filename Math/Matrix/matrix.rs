@@ -1,4 +1,4 @@
-/// # Matrix ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Matrix/matrix.rs))
+/// # Matrix ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Math/Matrix/matrix.rs))
 ///
 /// You'll need the traits in module [math.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/CombinedRustModules/math.rs) to use the same.
 pub mod matrix {

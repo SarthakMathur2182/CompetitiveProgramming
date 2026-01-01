@@ -7,48 +7,58 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 use std::io::{BufWriter, StdoutLock, Write};
+use std::thread;
 
 fn main() {
-    let sc = Scanner::new();
-    let out = BufWriter::with_capacity(custom_io::IO_BUF_SIZE, std::io::stdout().lock());
-    let mut sol = Solution::with_io(sc, out);
+    let builder = thread::Builder::new()
+        .name("main".into())
+        .stack_size(1 << 28);
+    builder
+        .spawn(|| {
+            let sc = Scanner::new();
+            let out = BufWriter::with_capacity(custom_io::IO_BUF_SIZE, std::io::stdout().lock());
+            let mut sol = Solution::with_io(sc, out);
 
-    loop {
-        sol.solve();
-        // let testcases: i32 = sol.sc.input();
-        // for testcase in 1..=testcases {
-        //     // dbg!("......", testcase);
-        //
-        //     // write!(sol.out, "Case #{}: ", testcase).unwrap();
-        //     let ans = sol.solve();
-        //     // writeln!(sol.out, "{}", ans).unwrap();
-        //
-        //     // if ans {
-        //     //     writeln!(sol.out, "Yes").unwrap();
-        //     // } else {
-        //     //     writeln!(sol.out, "No").unwrap();
-        //     // }
-        //
-        //     // for x in ans {
-        //     //     write!(sol.out, "{} ", x).unwrap();
-        //     //     writeln!(sol.out).unwrap();
-        //     // }
-        // }
+            loop {
+                sol.solve();
+                // let testcases: i32 = sol.sc.input();
+                // for testcase in 1..=testcases {
+                //     // dbg!("......", testcase);
+                //
+                //     // write!(sol.out, "Case #{}: ", testcase).unwrap();
+                //     let ans = sol.solve();
+                //     // writeln!(sol.out, "{}", ans).unwrap();
+                //
+                //     // if ans {
+                //     //     writeln!(sol.out, "Yes").unwrap();
+                //     // } else {
+                //     //     writeln!(sol.out, "No").unwrap();
+                //     // }
+                //
+                //     // for x in ans {
+                //     //     write!(sol.out, "{} ", x).unwrap();
+                //     //     writeln!(sol.out).unwrap();
+                //     // }
+                // }
 
-        sol.sc.skip_whitespaces();
-        if sol.sc.stored_next_byte.is_none() {
-            break;
-        }
-        match std::env::args().collect::<Vec<_>>().get(1) {
-            Some(val) if *val == "-DEBUG".to_string() => {
-                writeln!(sol.out, "Next Input:").unwrap();
-                dbg!("Next Input:");
+                sol.sc.skip_whitespaces();
+                if sol.sc.stored_next_byte.is_none() {
+                    break;
+                }
+                match std::env::args().collect::<Vec<_>>().get(1) {
+                    Some(val) if *val == "-DEBUG".to_string() => {
+                        writeln!(sol.out, "Next Input:").unwrap();
+                        dbg!("Next Input:");
+                    }
+                    _ => {
+                        break;
+                    }
+                }
             }
-            _ => {
-                break;
-            }
-        }
-    }
+        })
+        .unwrap()
+        .join()
+        .unwrap();
 }
 
 pub mod custom_io {

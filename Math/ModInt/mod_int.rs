@@ -1,6 +1,6 @@
-/// # Modular Arithmetic ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/ModInt/mod_int.rs))
+/// # Modular Arithmetic ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Math/ModInt/mod_int.rs))
 ///
-/// The way of using this is given at the end (choose the types and modulo accordingly).
+/// The way of using this is given right after the end of the module (choose the types and modulo accordingly).
 ///
 /// You'll need the module [math.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/CombinedRustModules/math.rs) to use the same.
 pub mod mod_int {

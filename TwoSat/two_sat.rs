@@ -1,3 +1,6 @@
+/// # Two Satisfiability ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/TwoSat/two_sat.rs))
+///
+/// You'll need the modules [graph.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Graph/graph.rs) and [scc.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Graph/scc.rs) to use the same.
 pub mod two_sat {
     use super::graph::*;
     use super::scc::*;

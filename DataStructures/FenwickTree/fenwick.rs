@@ -1,3 +1,6 @@
+/// # BIT / Fenwick Tree ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/DataStructures/FenwickTree/fenwick.rs))
+///
+/// The tree is 1-indexed, but the utils have to be called on basis of 0-based indexing.
 pub mod fenwick {
     use std::ops::AddAssign;
 

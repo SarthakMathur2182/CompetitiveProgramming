@@ -1,3 +1,4 @@
+/// # Graph ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Graph/graph.rs))
 pub mod graph {
     #[derive(Debug, Copy, Clone, Eq, PartialEq)]
     pub enum NodeVisitStatus {

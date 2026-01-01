@@ -1,4 +1,4 @@
-/// # Segment Tree ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/SegmentTree/seg_tree.rs))
+/// # Segment Tree ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/DataStructures/SegmentTree/seg_tree.rs))
 ///
 /// Includes lazy propagation
 ///

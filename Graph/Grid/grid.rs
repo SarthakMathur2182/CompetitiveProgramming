@@ -1,3 +1,6 @@
+/// # Grid ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Graph/Grid/grid.rs))
+///
+/// Some common direction arrays + utils for traversing in a grid.
 pub mod grid {
     /// This is made from the perspective of traversing a 2-D array, so the direction and the difference might not make sense.
     pub static DIR_GRID4: [(u8, isize, isize); 4] =

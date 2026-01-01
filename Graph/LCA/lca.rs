@@ -1,3 +1,4 @@
+/// # LCA using Binary Lifting ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Graph/LCA/lca.rs))
 pub mod lca {
     use std::convert::TryInto;
 

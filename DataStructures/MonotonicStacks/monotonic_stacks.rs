@@ -1,3 +1,6 @@
+/// # Monotonic Stack ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/DataStructures/MonotonicStacks/monotonic_stacks.rs))
+///
+/// Added some common utils (next greater, prev smaller, etc.) and generic util (for prev and next).
 pub mod monotonic_stacks {
     use std::collections::VecDeque;
 

@@ -1,3 +1,6 @@
+/// # String Algorithms ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/String/string_algos.rs))
+///
+/// Only has KMP for now, will add others.
 pub mod string_algos {
     pub fn lps<T: PartialEq>(a: &[T]) -> Vec<usize> {
         let n = a.len();

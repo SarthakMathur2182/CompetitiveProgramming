@@ -1,3 +1,4 @@
+/// # Sieve of Eratosthenes ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Math/Sieve/sieve.rs))
 pub mod sieve {
     use std::convert::TryInto;
     use std::fmt::Debug;

@@ -1,3 +1,6 @@
+/// # Utils ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/CombinedRustModules/my_utils.rs))
+///
+/// Some common utils, might add more in the future.
 pub mod my_utils {
     use std::ops::{Bound, RangeBounds};
 

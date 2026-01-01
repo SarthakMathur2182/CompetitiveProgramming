@@ -1,3 +1,6 @@
+/// # Strongly Connected Components ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Graph/scc.rs))
+///
+/// You'll need the module [graph.rs](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Graph/graph.rs) to use the same.
 pub mod scc {
     use super::graph::*;
 
@@ -6,8 +9,8 @@ pub mod scc {
         pub components: Vec<Vec<u32>>,
         /// The index of the component the node is part of
         pub group: Vec<u32>,
-        /// Might contain parallel edges
-        pub condensed_graph: Graph<T, true>,
+        // /// Might contain parallel edges
+        // pub condensed_graph: Graph<T, true>,
     }
 
     impl<T: Clone + Eq + PartialEq + Default> SCC<T> {
@@ -27,15 +30,17 @@ pub mod scc {
                 n: g.n,
                 components: Vec::new(),
                 group: vec![0; g.n],
-                condensed_graph: Graph::new(g.n, g.edges.len()),
+                // condensed_graph: Graph::new(g.n, g.edges.len()),
             };
             scc.init(adj, rev_adj);
 
-            for e in &g.edges {
-                let (u, v) = (scc.group[e.u as usize], scc.group[e.v as usize]);
-                scc.condensed_graph
-                    .add_edge(u as usize, v as usize, e.w.clone());
-            }
+            // for e in &g.edges {
+            //     let (u, v) = (scc.group[e.u as usize], scc.group[e.v as usize]);
+            //     if u != v {
+            //         scc.condensed_graph
+            //             .add_edge(u as usize, v as usize, e.w.clone());
+            //     }
+            // }
             scc
         }
 

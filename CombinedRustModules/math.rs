@@ -1,3 +1,6 @@
+/// # Math module ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/CombinedRustModules/math.rs))
+///
+/// Contains the math traits and some common utils.
 pub mod math {
     use std::ops::{BitAnd, Div, Mul, Rem, ShrAssign};
 

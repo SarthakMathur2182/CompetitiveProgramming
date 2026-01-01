@@ -1,4 +1,4 @@
-/// # DSU ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/DSU/dsu.rs))
+/// # DSU ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/DataStructures/DSU/dsu.rs))
 pub mod dsu {
     pub struct DSU {
         nodes: Vec<i32>,
