@@ -69,20 +69,21 @@ pub mod seg_tree {
             let (mut l, mut r) = super::get_inclusive_usize_bounds(&range, self.capacity);
             l += self.capacity;
             r += self.capacity;
-            let mut ans = Ops::data_identity();
+            let mut left = Ops::data_identity();
+            let mut right = Ops::data_identity();
             while l <= r {
                 if l & 1 == 1 {
-                    ans = Ops::merge(&self.nodes[l], &ans);
+                    left = Ops::merge(&left, &self.nodes[l]);
                     l += 1;
                 }
                 if r & 1 == 0 {
-                    ans = Ops::merge(&ans, &self.nodes[r]);
+                    right = Ops::merge(&self.nodes[r], &right);
                     r -= 1;
                 }
                 l >>= 1;
                 r >>= 1;
             }
-            ans
+            Ops::merge(&left, &right)
         }
 
         /// Query without computing/merging nodes, and allows to use the nodes in the `access_node` function.
@@ -134,8 +135,9 @@ pub mod seg_tree {
         {
             pos += self.capacity;
             self.nodes[pos] = update_to(self.nodes[pos].clone());
-            while pos > 1 {
-                self.nodes[pos >> 1] = Ops::merge(&self.nodes[pos], &self.nodes[pos ^ 1]);
+            pos >>= 1;
+            while pos >= 1 {
+                self.nodes[pos] = Ops::merge(&self.nodes[pos << 1], &self.nodes[pos << 1 | 1]);
                 pos >>= 1;
             }
         }
