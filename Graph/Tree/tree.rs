@@ -1,4 +1,4 @@
-/// # Tree ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Graph/tree.rs))
+/// # Tree ([source](https://github.com/SarthakMathur2182/CompetitiveProgramming/blob/main/Graph/Tree/tree.rs))
 pub mod tree {
     pub struct Tree {
         pub n: usize,
