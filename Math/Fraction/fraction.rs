@@ -251,7 +251,15 @@ pub mod fraction {
         fn cmp(&self, other: &Self) -> Ordering {
             let x = OpT::from(self.num) * OpT::from(other.den);
             let y = OpT::from(self.den) * OpT::from(other.num);
-            x.cmp(y)
+            x.cmp(&y)
+        }
+    }
+
+    impl<T: FractionOperationType, OpT: FractionOperationType + From<T> + TryInto<T>> PartialOrd
+        for Fraction<T, OpT>
+    {
+        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+            Some(self.cmp(other))
         }
     }
 }
