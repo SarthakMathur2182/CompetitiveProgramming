@@ -25,7 +25,8 @@ pub mod mod_int {
         type T: Copy
             + Clone
             + Ord // Keeping Ord for T in case we ever need it (but not for ModInt)
-            + PartialOrd // Also this is required in modular inverse (it is the exponent)
+            + PartialOrd
+            // Also this is required in modular inverse (it is the exponent)
             + BitAnd<Output = Self::T>
             + ShrAssign
             + Eq
@@ -53,17 +54,17 @@ pub mod mod_int {
     }
 
     /// This struct does not type cast when adding, so make sure `2 * (MOD - 1) <= T::MAX`
-    #[derive(Eq, PartialEq, Copy, Clone)]
     pub struct ModInt<M: Modulo>(M::T);
 
     impl<M: Modulo> ModInt<M> {
+        #[inline]
         pub fn new<U: Into<M::OpT>>(val: U) -> Self {
             Self(Self::normalize(val))
         }
 
         #[inline]
         pub fn normalize<U: Into<M::OpT>>(val: U) -> M::T {
-            let rem = M::opt_to_t(val.into() % M::OpT::from(M::MOD));
+            let rem = M::opt_to_t(val.into() % M::MOD.into());
             if rem < M::T::default() {
                 rem + M::MOD
             } else {
@@ -78,19 +79,21 @@ pub mod mod_int {
         }
     }
 
-    impl<M: Modulo, U: Into<M::OpT>> From<U> for ModInt<M> {
-        fn from(val: U) -> Self {
-            Self::new(val)
+    impl<M: Modulo> Copy for ModInt<M> {}
+
+    impl<M: Modulo> Clone for ModInt<M> {
+        fn clone(&self) -> Self {
+            *self
         }
     }
 
-    impl<M: Modulo, U: TryInto<M::OpT>> TryFrom<U> for ModInt<M> {
-        type Error = TryInto<M::OpT>::Error;
-
-        fn try_from(val: U) -> Result<Self, Self::Error> {
-            Self::new(val.try_into())
+    impl<M: Modulo> PartialEq for ModInt<M> {
+        fn eq(&self, other: &Self) -> bool {
+            self.0 == other.0
         }
     }
+
+    impl<M: Modulo> Eq for ModInt<M> {}
 
     impl<M: Modulo> AddAssign for ModInt<M> {
         fn add_assign(&mut self, rhs: Self) {
@@ -207,15 +210,20 @@ pub mod mod_int {
     }
 
     impl<M: Modulo, const N: usize> Combinatorics<M, N> {
-        pub fn new() -> Self {
+        pub fn new() -> Self
+        where
+            M::OpT: TryFrom<usize>,
+            <<M as Modulo>::OpT as TryFrom<usize>>::Error: Debug,
+        {
             let mut factorial = vec![ModInt::<M>::one(); N];
             for i in 1..N {
-                factorial[i] = factorial[i - 1] * ModInt::try_from(i);
+                factorial[i] = factorial[i - 1] * ModInt::<M>::new(M::OpT::try_from(i).unwrap());
             }
             let mut inverse_factorial = vec![ModInt::<M>::one(); N];
             inverse_factorial[N - 1] = factorial[N - 1].mul_inv();
             for i in (0..N - 1).rev() {
-                inverse_factorial[i] = inverse_factorial[i + 1] * ModInt::try_from(i + 1);
+                inverse_factorial[i] =
+                    inverse_factorial[i + 1] * ModInt::<M>::new(M::OpT::try_from(i + 1).unwrap());
             }
 
             Self {
@@ -244,7 +252,7 @@ pub mod mod_int {
         pub fn c<I>(&self, n: I, r: I) -> ModInt<M>
         where
             I: TryInto<usize> + Copy,
-            <I as TryInto<usize>>::Error: Debug,
+            // <I as TryInto<usize>>::Error: Debug,
         {
             let n = match n.try_into() {
                 Ok(n) => n,
@@ -269,7 +277,7 @@ pub mod mod_int {
         pub fn p<I>(&self, n: I, r: I) -> ModInt<M>
         where
             I: TryInto<usize> + Copy,
-            <I as TryInto<usize>>::Error: Debug,
+            // <I as TryInto<usize>>::Error: Debug,
         {
             let n = match n.try_into() {
                 Ok(n) => n,
@@ -301,40 +309,62 @@ pub mod mod_int {
             assert!(n > 0, "Inverse of 0 does not exist!");
             self.inverse_factorial[n] * self.factorial[n - 1]
         }
+    }
 
-        pub fn c<I>(&self, n: I, r: I) -> ModInt<M>
-        where
-            I: TryInto<u32> + Copy,
-            <I as TryInto<u32>>::Error: Debug,
-        {
-            let n = match n.try_into() {
-                Ok(n) => n,
-                Err(_) => {
-                    return ModInt::default();
-                }
-            };
-            let mut r = match r.try_into() {
-                Ok(r) => r,
-                Err(_) => {
-                    return ModInt::default();
-                }
-            };
-
-            if r > n {
-                return ModInt::default();
+    pub fn c_linear<I, M>(n: I, r: I) -> ModInt<M>
+    where
+        I: TryInto<u32> + Copy,
+        M: Modulo,
+        M::OpT: TryFrom<u32>,
+        <<M as Modulo>::OpT as TryFrom<u32>>::Error: Debug,
+    {
+        let n = match n.try_into() {
+            Ok(n) => n,
+            Err(_) => {
+                return ModInt::<M>::default();
             }
-
-            if r > n - r {
-                r = n - r;
+        };
+        let mut r = match r.try_into() {
+            Ok(r) => r,
+            Err(_) => {
+                return ModInt::<M>::default();
             }
+        };
 
-            let mut ans = ModInt::default();
-            for i in 0..r {
-                ans *= ModInt::try_from(n - i);
-                ans /= self.inv(i + 1);
-            }
-            ans
+        if r > n {
+            return ModInt::<M>::default();
         }
+
+        if r > n - r {
+            r = n - r;
+        }
+
+        let mut ans = ModInt::<M>::one();
+        for i in 0..r {
+            ans *= ModInt::<M>::new(M::OpT::try_from(n - i).unwrap());
+            ans /= ModInt::<M>::new(M::OpT::try_from(i + 1).unwrap());
+        }
+        ans
+    }
+
+    pub fn get_powers<M: Modulo>(b: ModInt<M>, n: usize) -> Vec<ModInt<M>> {
+        let mut pow = vec![ModInt::<M>::one(); n + 1];
+        for i in 1..=n {
+            let p = pow[i - 1] * b;
+            pow[i] = p;
+        }
+        pow
+    }
+
+    pub fn get_inv_powers<M: Modulo>(b: ModInt<M>, n: usize) -> Vec<ModInt<M>> {
+        let mut inv_pow = vec![ModInt::<M>::one(); n + 1];
+        inv_pow[n] = super::math::pow(b.mul_inv(), n);
+        for i in (0..n).rev() {
+            let p = inv_pow[i + 1] * b;
+            inv_pow[i] = p;
+        }
+
+        inv_pow
     }
 }
 use mod_int::*;
