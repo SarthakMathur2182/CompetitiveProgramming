@@ -51,31 +51,30 @@ pub mod math {
             fn midpoint(a: Self, b: Self) -> Self;
         }
         // a.midpoint(b) is released in a quite latest version of rust.
-        // Currently copying this from the rust library code.
-        macro_rules! impl_midpoint_trait_for_unsigned_primitives {
+        // Currently copying this from the Rust library code.
+        macro_rules! impl_midpoint_trait_for_unsigned_integers {
             ($($t:ty),*) => {
-                $(impl Midpoint for $t {fn midpoint(a: Self, b: Self) -> Self {
-                    ((a ^ b) >> 1) + (a & b)
-                }
+                $(impl Midpoint for $t {
+                    fn midpoint(a: Self, b: Self) -> Self { ((a ^ b) >> 1) + (a & b) }
                 })*
             };
         }
-        impl_midpoint_trait_for_unsigned_primitives!(u8, u16, u32, u64, u128, usize);
-        macro_rules! impl_midpoint_trait_for_signed_primitives {
+        impl_midpoint_trait_for_unsigned_integers!(u8, u16, u32, u64, u128, usize);
+        macro_rules! impl_midpoint_trait_for_signed_integers {
             ($($t:ty),*) => {
-                $(impl Midpoint for $t {fn midpoint(a: Self, b: Self) -> Self {
-                    let ans = ((a ^ b) >> 1) + (a & b);
-                    ans + (if ans < 0 { 1 } else { 0 } & (a ^ b))
-                }
+                $(impl Midpoint for $t {
+                    fn midpoint(a: Self, b: Self) -> Self {
+                        let ans = ((a ^ b) >> 1) + (a & b);
+                        ans + (if ans < 0 { 1 } else { 0 } & (a ^ b))
+                    }
                 })*
             };
         }
-        impl_midpoint_trait_for_signed_primitives!(i8, i16, i32, i64, i128, isize);
+        impl_midpoint_trait_for_signed_integers!(i8, i16, i32, i64, i128, isize);
         macro_rules! impl_midpoint_trait_for_floating_primitives {
             ($($t:ty),*) => {
-                $(impl Midpoint for $t {fn midpoint(a: Self, b: Self) -> Self {
-                    a / 2 as $t + b / 2 as $t
-                }
+                $(impl Midpoint for $t {
+                    fn midpoint(a: Self, b: Self) -> Self { a / 2 as $t + b / 2 as $t }
                 })*
             };
         }
@@ -83,15 +82,33 @@ pub mod math {
         // TODO: Use this once the online judges update their version
         // macro_rules! impl_midpoint_trait_for_primitives {
         //     ($($t:ty),*) => {
-        //         $(impl Midpoint for $t {fn midpoint(a: Self, b: Self) -> Self {
-        //             a.midpoint(b)
-        //         }
+        //         $(impl Midpoint for $t {
+        //             fn midpoint(a: Self, b: Self) -> Self {
+        //                 a.midpoint(b)
+        //             }
         //         })*
         //     };
         // }
         // impl_midpoint_trait_for_primitives!(
         //     u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64
         // );
+
+        pub trait RoundedMidpoint: Midpoint {
+            fn midpoint_floor(a: Self, b: Self) -> Self;
+
+            fn midpoint_ceil(a: Self, b: Self) -> Self;
+        }
+        macro_rules! impl_rounded_midpoint_trait_for_integers {
+            ($($t:ty),*) => {
+                $(impl Midpoint for $t {
+                    fn midpoint_floor(a: Self, b: Self) -> Self { (a & b) + ((a ^ b) >> 1) }
+                    fn midpoint_ceil(a:Self, b: Self) -> Self { (a | b) - ((a ^ b) >> 1) }
+                })*
+            };
+        }
+        impl_rounded_midpoint_trait_for_integers!(
+            u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize
+        );
     }
 
     pub fn pow_with_identity<T, P>(mut base: T, mut exp: P, identity: T) -> T

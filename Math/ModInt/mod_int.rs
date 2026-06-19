@@ -252,7 +252,6 @@ pub mod mod_int {
         pub fn c<I>(&self, n: I, r: I) -> ModInt<M>
         where
             I: TryInto<usize> + Copy,
-            // <I as TryInto<usize>>::Error: Debug,
         {
             let n = match n.try_into() {
                 Ok(n) => n,
@@ -277,7 +276,6 @@ pub mod mod_int {
         pub fn p<I>(&self, n: I, r: I) -> ModInt<M>
         where
             I: TryInto<usize> + Copy,
-            // <I as TryInto<usize>>::Error: Debug,
         {
             let n = match n.try_into() {
                 Ok(n) => n,
