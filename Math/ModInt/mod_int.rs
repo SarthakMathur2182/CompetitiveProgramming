@@ -54,7 +54,7 @@ pub mod mod_int {
     }
 
     /// This struct does not type cast when adding, so make sure `2 * (MOD - 1) <= T::MAX`
-    pub struct ModInt<M: Modulo>(M::T);
+    pub struct ModInt<M: Modulo>(pub M::T);
 
     impl<M: Modulo> ModInt<M> {
         #[inline]

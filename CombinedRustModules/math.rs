@@ -100,7 +100,7 @@ pub mod math {
         }
         macro_rules! impl_rounded_midpoint_trait_for_integers {
             ($($t:ty),*) => {
-                $(impl Midpoint for $t {
+                $(impl RoundedMidpoint for $t {
                     fn midpoint_floor(a: Self, b: Self) -> Self { (a & b) + ((a ^ b) >> 1) }
                     fn midpoint_ceil(a:Self, b: Self) -> Self { (a | b) - ((a ^ b) >> 1) }
                 })*
