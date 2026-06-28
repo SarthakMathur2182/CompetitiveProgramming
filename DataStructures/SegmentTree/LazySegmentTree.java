@@ -54,8 +54,7 @@ abstract class LazySegmentTree<Data, Lazy> {
      * <p>We can also simply take the size of the tree as {@code 4 * n} instead of calling this method.
      */
     private static int ceilingPowerOf2(int n) {
-        if ((n & (n - 1)) == 0)
-            return n;
+        if ((n & (n - 1)) == 0) return n;
         n |= n >> 1;
         n |= n >> 2;
         n |= n >> 4;
@@ -79,8 +78,7 @@ abstract class LazySegmentTree<Data, Lazy> {
     }
 
     private void rangeUpdate(int p, int l, int r, int ql, int qr, Lazy updateTo) {
-        if (qr < l || ql > r)
-            return;
+        if (qr < l || ql > r) return;
 
         if (ql <= l && r <= qr) {
             applyAt(p, l, r, updateTo);
@@ -125,15 +123,54 @@ abstract class LazySegmentTree<Data, Lazy> {
     }
 
     private Data rangeQuery(int p, int l, int r, int ql, int qr) {
-        if (qr < l || ql > r)
-            return DATA_IDENTITY;
+        if (qr < l || ql > r) return DATA_IDENTITY;
 
-        if (ql <= l && r <= qr)
-            return dataNodes[p];
+        if (ql <= l && r <= qr) return dataNodes[p];
 
         int m = (l + r) >> 1;
         push(p, l, r);
         return merge(rangeQuery(p << 1, l, m, ql, qr), rangeQuery(p << 1 | 1, m + 1, r, ql, qr));
+    }
+
+    /**
+     * Segment Tree Walk
+     *
+     * @return The first index from the range {@code [0, n - 1]} that satisfies the condition, {@code n} if no element satisfies the condition.
+     */
+    public int firstTrue(int l, int r, java.util.function.Predicate<Data> condition) {
+        return firstTrue(1, 0, n - 1, l, r, condition);
+    }
+
+    private int firstTrue(int p, int l, int r, int ql, int qr, java.util.function.Predicate<Data> condition) {
+        if (ql > r || qr < l || !condition.test(dataNodes[p])) return n;
+        if (l == r) return l;
+
+        int m = (l + r) >> 1;
+        push(p, l, r);
+        int left = firstTrue(p << 1, l, m, ql, qr, condition);
+        if (left != n) return left;
+        return firstTrue(p << 1 | 1, m + 1, r, ql, qr, condition);
+    }
+
+
+    /**
+     * Segment Tree Walk
+     *
+     * @return The last index from the range {@code [0, n - 1]} that satisfies the condition, {@code -1} if no element satisfies the condition.
+     */
+    public int lastTrue(int l, int r, java.util.function.Predicate<Data> condition) {
+        return lastTrue(1, 0, n - 1, l, r, condition);
+    }
+
+    private int lastTrue(int p, int l, int r, int ql, int qr, java.util.function.Predicate<Data> condition) {
+        if (ql > r || qr < l || !condition.test(dataNodes[p])) return -1;
+        if (l == r) return l;
+
+        int m = (l + r) >> 1;
+        push(p, l, r);
+        int right = lastTrue(p << 1 | 1, m + 1, r, ql, qr, condition);
+        if (right != -1) return right;
+        return lastTrue(p << 1, l, m, ql, qr, condition);
     }
 
     @Override

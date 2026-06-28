@@ -49,8 +49,7 @@ abstract class SegmentTree<Node> {
      * <p>We can also simply take the size of the tree as {@code 4 * n} instead of calling this method.
      */
     private static int ceilingPowerOf2(int n) {
-        if ((n & (n - 1)) == 0)
-            return n;
+        if ((n & (n - 1)) == 0) return n;
         n |= n >> 1;
         n |= n >> 2;
         n |= n >> 4;
@@ -79,8 +78,7 @@ abstract class SegmentTree<Node> {
     }
 
     private void update(int v, int l, int r, int position, java.util.function.UnaryOperator<Node> updateTo) {
-        if (position < l || position > r)
-            return;
+        if (position < l || position > r) return;
         if (l == r) {
             tree[v] = updateTo.apply(tree[v]);
             return;
@@ -108,12 +106,48 @@ abstract class SegmentTree<Node> {
     }
 
     private Node query(int v, int l, int r, int ql, int qr) {
-        if (ql > r || qr < l)
-            return IDENTITY;
-        if (ql <= l && qr >= r)
-            return tree[v];
+        if (ql > r || qr < l) return IDENTITY;
+        if (ql <= l && qr >= r) return tree[v];
         int m = (l + r) >> 1;
         return merge(query(v << 1, l, m, ql, qr), query(v << 1 | 1, m + 1, r, ql, qr));
+    }
+
+    /**
+     * Segment Tree Walk
+     *
+     * @return The first index from the range {@code [0, n - 1]} that satisfies the condition, {@code n} if no element satisfies the condition.
+     */
+    public int firstTrue(int l, int r, java.util.function.Predicate<Node> condition) {
+        return firstTrue(1, 0, n - 1, l, r, condition);
+    }
+
+    private int firstTrue(int v, int l, int r, int ql, int qr, java.util.function.Predicate<Node> condition) {
+        if (ql > r || qr < l || !condition.test(tree[v])) return n;
+        if (l == r) return l;
+
+        int m = (l + r) >> 1;
+        int left = firstTrue(v << 1, l, m, ql, qr, condition);
+        if (left != n) return left;
+        return firstTrue(v << 1 | 1, m + 1, r, ql, qr, condition);
+    }
+
+    /**
+     * Segment Tree Walk
+     *
+     * @return The last index from the range {@code [0, n - 1]} that satisfies the condition, {@code -1} if no element satisfies the condition.
+     */
+    public int lastTrue(int l, int r, java.util.function.Predicate<Node> condition) {
+        return lastTrue(1, 0, n - 1, l, r, condition);
+    }
+
+    private int lastTrue(int v, int l, int r, int ql, int qr, java.util.function.Predicate<Node> condition) {
+        if (ql > r || qr < l || !condition.test(tree[v])) return -1;
+        if (l == r) return l;
+
+        int m = (l + r) >> 1;
+        int right = lastTrue(v << 1 | 1, m + 1, r, ql, qr, condition);
+        if (right != -1) return right;
+        return lastTrue(v << 1, l, m, ql, qr, condition);
     }
 
     /**

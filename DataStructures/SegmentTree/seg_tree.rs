@@ -141,6 +141,94 @@ pub mod seg_tree {
                 pos >>= 1;
             }
         }
+
+        /// Segment Tree Walk
+        ///
+        /// Returns an option containing the first index from the range `[0, n - 1]` that satisfies the condition,
+        /// `None` if no element satisfies the condition.
+        pub fn first_true<R, F>(&self, range: R, mut pred: F) -> Option<usize>
+        where
+            R: RangeBounds<usize>,
+            F: FnMut(&Ops::Data) -> bool,
+        {
+            let (l, r) = super::get_inclusive_usize_bounds(&range, self.capacity);
+            self._first_true(1, 0, self.capacity - 1, l, r, &mut pred)
+        }
+
+        fn _first_true<F>(
+            &self,
+            v: usize,
+            l: usize,
+            r: usize,
+            ql: usize,
+            qr: usize,
+            pred: &mut F,
+        ) -> Option<usize>
+        where
+            F: FnMut(&Ops::Data) -> bool,
+        {
+            if qr < l || ql > r {
+                return None;
+            }
+            if !pred(&self.nodes[v]) {
+                return None;
+            }
+            if l == r {
+                return Some(l);
+            }
+
+            let m = (l + r) >> 1;
+            let left = self._first_true(v << 1, l, m, ql, qr, pred);
+            if left.is_some() {
+                left
+            } else {
+                self._first_true(v << 1 | 1, m + 1, r, ql, qr, pred)
+            }
+        }
+
+        /// Segment Tree Walk
+        ///
+        /// Returns an option containing the last index from the range `[0, n - 1]` that satisfies the condition,
+        /// `None` if no element satisfies the condition.
+        pub fn last_true<R, F>(&self, range: R, mut pred: F) -> Option<usize>
+        where
+            R: RangeBounds<usize>,
+            F: FnMut(&Ops::Data) -> bool,
+        {
+            let (l, r) = super::get_inclusive_usize_bounds(&range, self.capacity);
+            self._last_true(1, 0, self.capacity - 1, l, r, &mut pred)
+        }
+
+        fn _last_true<F>(
+            &self,
+            v: usize,
+            l: usize,
+            r: usize,
+            ql: usize,
+            qr: usize,
+            pred: &mut F,
+        ) -> Option<usize>
+        where
+            F: FnMut(&Ops::Data) -> bool,
+        {
+            if qr < l || ql > r {
+                return None;
+            }
+            if !pred(&self.nodes[v]) {
+                return None;
+            }
+            if l == r {
+                return Some(l);
+            }
+
+            let m = (l + r) >> 1;
+            let right = self._last_true(v << 1 | 1, m + 1, r, ql, qr, pred);
+            if right.is_some() {
+                right
+            } else {
+                self._last_true(v << 1, l, m, ql, qr, pred)
+            }
+        }
     }
 
     impl<Ops: SegmentTreeOperations> Debug for SegmentTree<Ops>
@@ -337,6 +425,96 @@ pub mod seg_tree {
             self._update(v << 1, l, m, ql, qr, update_to);
             self._update(v << 1 | 1, m + 1, r, ql, qr, update_to);
             self.data_nodes[v] = Ops::merge(&self.data_nodes[v << 1], &self.data_nodes[v << 1 | 1]);
+        }
+
+        /// Segment Tree Walk
+        ///
+        /// Returns an option containing the first index from the range `[0, n - 1]` that satisfies the condition,
+        /// `None` if no element satisfies the condition.
+        pub fn first_true<R, F>(&mut self, range: R, mut pred: F) -> Option<usize>
+        where
+            R: RangeBounds<usize>,
+            F: FnMut(&Ops::Data) -> bool,
+        {
+            let (l, r) = super::get_inclusive_usize_bounds(&range, self.capacity);
+            self._first_true(1, 0, self.capacity - 1, l, r, &mut pred)
+        }
+
+        fn _first_true<F>(
+            &mut self,
+            v: usize,
+            l: usize,
+            r: usize,
+            ql: usize,
+            qr: usize,
+            pred: &mut F,
+        ) -> Option<usize>
+        where
+            F: FnMut(&Ops::Data) -> bool,
+        {
+            if qr < l || ql > r {
+                return None;
+            }
+            if !pred(&self.data_nodes[v]) {
+                return None;
+            }
+            if l == r {
+                return Some(l);
+            }
+
+            self.push(v, l, r);
+            let m = (l + r) >> 1;
+            let left = self._first_true(v << 1, l, m, ql, qr, pred);
+            if left.is_some() {
+                left
+            } else {
+                self._first_true(v << 1 | 1, m + 1, r, ql, qr, pred)
+            }
+        }
+
+        /// Segment Tree Walk
+        ///
+        /// Returns an option containing the last index from the range `[0, n - 1]` that satisfies the condition,
+        /// `None` if no element satisfies the condition.
+        pub fn last_true<R, F>(&mut self, range: R, mut pred: F) -> Option<usize>
+        where
+            R: RangeBounds<usize>,
+            F: FnMut(&Ops::Data) -> bool,
+        {
+            let (l, r) = super::get_inclusive_usize_bounds(&range, self.capacity);
+            self._last_true(1, 0, self.capacity - 1, l, r, &mut pred)
+        }
+
+        fn _last_true<F>(
+            &mut self,
+            v: usize,
+            l: usize,
+            r: usize,
+            ql: usize,
+            qr: usize,
+            pred: &mut F,
+        ) -> Option<usize>
+        where
+            F: FnMut(&Ops::Data) -> bool,
+        {
+            if qr < l || ql > r {
+                return None;
+            }
+            if !pred(&self.data_nodes[v]) {
+                return None;
+            }
+            if l == r {
+                return Some(l);
+            }
+
+            self.push(v, l, r);
+            let m = (l + r) >> 1;
+            let right = self._last_true(v << 1 | 1, m + 1, r, ql, qr, pred);
+            if right.is_some() {
+                right
+            } else {
+                self._last_true(v << 1, l, m, ql, qr, pred)
+            }
         }
     }
 
