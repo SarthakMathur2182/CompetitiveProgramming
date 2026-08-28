@@ -134,7 +134,8 @@ pub mod seg_tree {
             F: Fn(Ops::Data) -> Ops::Data,
         {
             pos += self.capacity;
-            self.nodes[pos] = update_to(self.nodes[pos].clone());
+            let curr_node = std::mem::replace(&mut self.nodes[pos], Ops::data_identity());
+            self.nodes[pos] = update_to(curr_node);
             pos >>= 1;
             while pos >= 1 {
                 self.nodes[pos] = Ops::merge(&self.nodes[pos << 1], &self.nodes[pos << 1 | 1]);
@@ -237,7 +238,10 @@ pub mod seg_tree {
     {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             for i in 1..self.capacity + self.n {
-                writeln!(f)?;
+                // New line for new depth of tree
+                if i & (i - 1) == 0 {
+                    writeln!(f)?;
+                }
                 write!(f, "{}: {:?}", i, self.nodes[i])?;
             }
             Ok(())
@@ -324,10 +328,9 @@ pub mod seg_tree {
 
         fn push(&mut self, v: usize, l: usize, r: usize) {
             let m = (l + r) >> 1;
-            let update_to = self.lazy_nodes[v].clone();
+            let update_to = std::mem::replace(&mut self.lazy_nodes[v], Ops::lazy_identity());
             self.apply_at(v << 1, l, m, &update_to);
             self.apply_at(v << 1 | 1, m + 1, r, &update_to);
-            self.lazy_nodes[v] = Ops::lazy_identity();
         }
 
         /// Range query over `range`

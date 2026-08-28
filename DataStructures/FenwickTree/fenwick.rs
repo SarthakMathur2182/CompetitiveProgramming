@@ -38,16 +38,13 @@ pub mod fenwick {
             let mut ans = T::default();
             i += 1;
             while i > 0 {
-                ans += self.tree[i as usize];
+                ans += self.tree[i];
                 i -= i & (!i + 1);
             }
             ans
         }
 
-        pub fn update(&mut self, i: usize, mut x: T)
-        where
-            T: SubAssign,
-        {
+        pub fn update(&mut self, i: usize, mut x: T) {
             x -= self.sum(i..=i);
             self.add(i, x);
         }
