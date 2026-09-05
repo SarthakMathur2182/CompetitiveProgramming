@@ -37,6 +37,7 @@ pub mod dynamic_seg_tree {
     }
 
     // TODO: Check if we should store the range handled by this node.
+    // TODO: Change the type from usize to u32 to save space (already done for RMQ)
     struct DynamicSegmentTreeNode<Ops: SegmentTreeOperations> {
         data: Ops::Data,
         left_child: usize,
