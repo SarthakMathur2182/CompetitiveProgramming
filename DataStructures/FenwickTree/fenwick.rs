@@ -26,7 +26,7 @@ pub mod fenwick {
         }
 
         pub fn sum<R: RangeBounds<usize>>(&self, range: R) -> T {
-            let (l, r) = super::get_inclusive_usize_bounds(&range, self.tree.len());
+            let (l, r) = super::get_inclusive_usize_bounds(&range, self.tree.len() - 1);
             let mut ans = self._sum(r);
             if l > 0 {
                 ans -= self._sum(l - 1);
